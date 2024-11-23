@@ -1,212 +1,106 @@
 "use client";
+import React, { useEffect, useState, ChangeEvent, lazy, Suspense } from "react";
+import { SignInButton, useUser } from "@clerk/clerk-react";
+import VideoConferencingRoom from "./VideoConferencing.tsx";
 
-import { useEffect, useState } from "react";
-import { db } from "../../firebaseConfig";
-import {
-    collection,
-    addDoc,
-    query,
-    where,
-    onSnapshot,
-    updateDoc,
-    doc,
-    getDocs,
-    setDoc
-} from "firebase/firestore";
-import { SignInButton, useUser } from "@clerk/nextjs";
-import SimplePeer from "simple-peer";
+const Form = lazy(() => import("./Form.tsx")); // Lazy import for the Form component
 
-type UserDocument = {
-    id: string;
-    userId: string;
-    isMatched: boolean;
-    joinedAt: number;
-    roomId: string | null;
-};
+interface FormData {
+  location: string;
+  bookedExam: string;
+  examDate: string;
+}
 
-export default function SpeakingPartner() {
-    const { user } = useUser();
-    const userId = user?.id;
-    const [roomId, setRoomId] = useState<string | null>(null);
-    const [peer, setPeer] = useState<SimplePeer.Instance | null>(null);
-    const [stream, setStream] = useState<MediaStream | null>(null);
-    const processedSignals = new Set<string>();
+interface Step {
+  id: number;
+  question: string;
+  key: keyof FormData;
+}
 
-    useEffect(() => {
-        if (!userId) return;
+const steps: Step[] = [
+  { id: 1, question: "Where do you belong?", key: "location" },
+  { id: 2, question: "Have you booked your TOEFL exam?", key: "bookedExam" },
+  { id: 3, question: "When are you planning to give TOEFL?", key: "examDate" },
+];
 
-        const joinQueue = async () => {
-            // Add user to the queue
-            const docRef = await addDoc(collection(db, "speaking-partners"), {
-                userId,
-                roomId: null,
-                isMatched: false,
-                joinedAt: Date.now(),
-            });
+export default function App() {
+  const [showAlert, setShowAlert] = useState(false);
+  const [stage, setStage] = useState<'home' | 'form' | 'video'>('home');
+  const [onlineCount, setOnlineCount] = useState(23044);
+  const { isSignedIn } = useUser();
 
-            // Listen for room assignment
-            const q = query(
-                collection(db, "speaking-partners"),
-                where("userId", "==", userId)
-            );
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-                snapshot.forEach((doc) => {
-                    const data = doc.data() as UserDocument;
-                    if (data.roomId) {
-                        setRoomId(data.roomId);
-                    }
-                });
-            });
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOnlineCount((prevCount) => prevCount + Math.floor(Math.random() * 10) + 1);
+    }, 2000);
 
-            // Get the total number of users in the room
-            const roomSnapshot = await getDocs(query(collection(db, "speaking-partners"), where("roomId", "==", null)));
-            const userCount = roomSnapshot.docs.length;
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
 
-            // Assign role based on the order
-            const isInitiator = userCount === 1; // First user is the initiator
-            localStorage.setItem("isInitiator", JSON.stringify(isInitiator)); // Store the role locally for reference
-            console.log("Role:", isInitiator ? "Initiator" : "Responder");
+  const handleButtonClick = () => {
+    if (!isSignedIn) {
+      setShowAlert(true);
+      return;
+    }
+    else setStage('form');
+  };
 
-            return () => {
-                unsubscribe();
-            };
-        };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
 
-        joinQueue();
-    }, [userId]);
-
-    useEffect(() => {
-        if (!roomId || !userId) return;
-
-        const initWebRTC = async () => {
-            // Capture user media
-            const localStream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true,
-            });
-            setStream(localStream);
-
-
-            // Attach local stream to video element
-            const localVideo = document.getElementById("localVideo") as HTMLVideoElement;
-            if (localVideo) {
-                localVideo.srcObject = localStream;
-            }
-
-            const isInitiator = JSON.parse(localStorage.getItem("isInitiator") || "false");
-
-            const newPeer = new SimplePeer({
-                initiator: isInitiator,
-                trickle: true,
-                stream: localStream,
-            });
-
-            setPeer(newPeer);
-
-            // Listen for signaling data via Firestore
-            const roomRef = doc(db, "rooms", roomId);
-
-            const unsubscribe = onSnapshot(roomRef, (snapshot) => {
-                const data = snapshot.data();
-                if (!data) return;
-
-                console.log("Signaling Data Received:", data);
-
-                try {
-                    // Process SDP offer
-                    if (data.offer && !isInitiator && !processedSignals.has("offer")) {
-                        processedSignals.add("offer");
-                        newPeer.signal(JSON.parse(data.offer));
-                    }
-
-                    // Process SDP answer
-                    if (data.answer && isInitiator && !processedSignals.has("answer")) {
-                        processedSignals.add("answer");
-                        newPeer.signal(JSON.parse(data.answer));
-                    }
-
-                    // Process ICE candidates
-                    Object.keys(data).forEach((key) => {
-                        if (key.startsWith("candidate-") && !processedSignals.has(key)) {
-                            processedSignals.add(key);
-                            newPeer.signal(JSON.parse(data[key]));
-                        }
-                    });
-                } catch (error) {
-                    console.error("Error processing remote signaling data:", error);
-                }
-            });
-
-            // Send signaling data
-            newPeer.on("signal", (data) => {
-                console.log("Signaling Data Sent:", data);
-
-                // Send all signaling data to Firestore (offer, answer, or ICE candidates)
-                updateDoc(roomRef, {
-                    [isInitiator ? "offer" : "answer"]: JSON.stringify(data),
-                }).catch((err) => console.error("Error updating signaling data:", err));
-            });
-
-            // Listen for the remote stream
-            newPeer.on("stream", (remoteStream: MediaStream) => {
-                console.log("Remote Stream Tracks:", remoteStream.getTracks());
-
-                const remoteVideo = document.getElementById("remoteVideo") as HTMLVideoElement;
-                if (remoteVideo) {
-                    remoteVideo.srcObject = remoteStream;
-                }
-            });
-            newPeer.on("connect", () => {
-                console.log("Peer connected successfully!");
-            });
-
-            newPeer.on("close", () => {
-                console.log("Peer connection closed.");
-                if (!newPeer.destroyed) {
-                    newPeer.destroy();
-                }
-            });
-
-            newPeer.on("error", (err) => {
-                console.error("Peer connection error:", err);
-            });
-
-            return () => {
-                unsubscribe();
-                if (peer) {
-                    peer.destroy();
-                }
-            };
-        };
-
-        initWebRTC();
-    }, [roomId, userId]);
-
-    return (
-        <main className="h-[100vh] flex flex-col items-center justify-center bg-slate-400">
-            {roomId ? (
-                <div className="flex flex-col items-center space-y-4">
-                    <video
-                        id="localVideo"
-                        autoPlay
-                        muted
-                        playsInline
-                        className="w-1/3 bg-black"
-                    ></video>
-                    <video
-                        id="remoteVideo"
-                        autoPlay
-                        playsInline
-                        className="w-1/3 bg-black"
-                    ></video>
-                    <p>Connected to Room: {roomId}</p>
-                </div>
-            ) : (
-                <>
-                    <SignInButton />
-                    <p>Waiting for a partner...</p>
-                </>
-            )}
-        </main>
-    );
+  return (
+    <>
+      {showAlert && (
+        <><SignInButton />log in pls</>
+      )}
+      {stage === 'home' && (
+        <div className="z-[0] relative overflow-hidden rounded-xl m-2 flex items-center min-h-screen bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/assets/video-confrencing-bg.jpg"
+              alt="Background"
+              className="w-full h-full object-cover blur"
+            />
+            <div className="absolute inset-0 bg-black opacity-50"></div>
+          </div>
+          <div className="relative text-white max-w-3xl p-10">
+            <h1 className="lg:text-7xl md:text-5xl font-bold mb-4 text-4xl">
+              Meet, chat, and study with students from all over the world 🌍
+            </h1>
+            <p className="text-lg mb-10 md:text-2xl">
+              Join the largest global student community online and say goodbye to lack of motivation.
+            </p>
+            <button onClick={handleButtonClick} className="bg-white text-pink-500 font-bold py-2 px-4 rounded-full mb-7 animate-bounce">
+              Study Together now
+            </button>
+            <div className="flex items-center mb-4">
+              <span className="bg-green-500 text-white px-2 py-1 rounded-full">100% free!</span>
+              <span className="ml-2 text-white animate-pulse">{onlineCount} Online</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {stage === 'form' && (
+        <Form setStage={setStage} />
+      )}
+      {stage === 'video' && (
+        <div
+          style={{
+            backgroundImage: `url(/assets/lib-bg.jpg)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100%',
+            height: '100vh',
+            borderRadius: '0.5rem',
+            padding: '1rem',
+          }}
+        >
+          <Suspense fallback={<div>Loading video conferencing room...</div>}>
+            <VideoConferencingRoom />
+          </Suspense>
+        </div>
+      )}
+    </>
+  );
 }

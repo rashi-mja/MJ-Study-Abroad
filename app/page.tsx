@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { Signika } from 'next/font/google';
 import MJASolutionHub from '@/components/mja-solution-hub';
+import TravelGuide from '@/components/StarSpeaks';
 
 const signika = Signika({ subsets: ['latin'], weight: ['300', '400', '700'] });
 
@@ -43,10 +44,15 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <main className='h-[100vh]'>
+      <main className=''>
         <div className="h-10 bg-gradient-to-b from-[#86D5F6] to-slate-50"></div>
         <MJASolutionHub />
       </main>
+
+      <main className=''>
+        <TravelGuide />
+      </main>
+
     </>
   )
 }

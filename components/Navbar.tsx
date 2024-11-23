@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Signika } from 'next/font/google';
+import { SignInButton } from '@clerk/nextjs';
 
 const signika = Signika({ subsets: ['latin'], weight: ['300', '400', '700'] });
 
@@ -35,15 +36,15 @@ export function Navbar() {
                             <Link href="/blog" className="text-gray-700 hover:text-gray-900">
                                 Blog
                             </Link>
-                            <Link href="/training" className="text-gray-700 hover:text-gray-900">
-                                Training Program
+                            <Link href="/speaking-partner" className="text-gray-700 hover:text-gray-900">
+                                Fing IELTS Speaking Partner
                             </Link>
                         </div>
                     </div>
                     <div className="hidden md:block">
-                        <button className="bg-gradient-to-b from-[#FFDFB8] to-[#F7EBBD] text-black px-5 py-3 hover:bg-orange-600 transition-colors shadow-lg rounded-2xl">
-                            Sign In
-                        </button>
+                        <div className="bg-gradient-to-b from-[#FFDFB8] to-[#F7EBBD] text-black px-5 py-3 hover:bg-orange-600 transition-colors shadow-lg rounded-2xl">
+                            <SignInButton />
+                        </div>
                     </div>
                 </div>
             </div>
