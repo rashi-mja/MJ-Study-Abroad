@@ -13,7 +13,7 @@ import {
     getDocs,
     setDoc
 } from "firebase/firestore";
-import { useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import SimplePeer from "simple-peer";
 
 type UserDocument = {
@@ -202,7 +202,10 @@ export default function SpeakingPartner() {
                     <p>Connected to Room: {roomId}</p>
                 </div>
             ) : (
-                <p>Waiting for a partner...</p>
+                <>
+                    <SignInButton />
+                    <p>Waiting for a partner...</p>
+                </>
             )}
         </main>
     );
