@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState, ChangeEvent, lazy, Suspense } from "react";
 import { SignInButton, useUser } from "@clerk/clerk-react";
-import VideoConferencingRoom from "./VideoConferencing.tsx";
+import VideoConferencingRoom from "./VideoConferencing";
 
-const Form = lazy(() => import("./Form.tsx")); // Lazy import for the Form component
+const Form = lazy(() => import("./Form")); // Lazy import for the Form component
 
 interface FormData {
   location: string;
