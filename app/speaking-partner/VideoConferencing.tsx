@@ -1,5 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { PlusCircle, Users, LogIn, LogOut } from 'lucide-react'
 import { useEffect, useState } from "react";
 import { Call, StreamCall, StreamTheme, StreamVideo, SpeakerLayout, StreamVideoClient } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
@@ -7,6 +11,9 @@ import { useUser } from "@clerk/clerk-react";
 import { collection, getDocs, query, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import CustomCallControls from "./CallControls";
+import { Baloo_Bhai_2 } from 'next/font/google';
+
+const Baloo = Baloo_Bhai_2({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 const apiKey = "mmhfdzb5evj2";
 
@@ -77,7 +84,7 @@ export default function VideoConferencingRoom() {
     return (
         <>
             {call && (
-                <>
+                <div className="min-h-screen bg-red-400 rounded-lg p-10">
                     <StreamVideo client={client!}>
                         <StreamTheme className="text-white my-theme-overrides">
                             <StreamCall call={call}>
@@ -86,9 +93,11 @@ export default function VideoConferencingRoom() {
                             </StreamCall>
                         </StreamTheme>
                     </StreamVideo>
-                </>
+                </div>
             )}
-            <RoomList setCallId={setSelectedCallId} />
+            {!call && (
+                <RoomList setCallId={setSelectedCallId} />
+            )}
         </>
     );
 }
@@ -209,71 +218,73 @@ function RoomList({
     }, []);
 
     return (
-        <div className="h-[100vh] flex flex-col items-center justify-center">
-            <h1>Available Rooms</h1>
-            <button
-                onClick={createRoom}
-                disabled={loading}
-                style={{
-                    padding: "10px 20px",
-                    marginBottom: "20px",
-                    backgroundColor: "#007BFF",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: loading ? "not-allowed" : "pointer",
-                }}
-            >
-                {loading ? "Creating Room..." : "Create New Room"}
-            </button>
-            <ul className="gap-4">
-                {rooms.length > 0 ? (
-                    rooms.map((room) => (
-                        <li key={room.id}>
-                            <div>
-                                <strong>Room ID:</strong> {room.id}
-                            </div>
-                            <div>
-                                <strong>Participants:</strong>{" "}
-                                {room.participants.map((p) => p.name).join(", ")}
-                            </div>
-                            <div>
-                                <strong>Is Full:</strong> {room.isFull ? "Yes" : "No"}
-                            </div>
-                            <button
-                                onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
-                                style={{
-                                    padding: "5px 10px",
-                                    marginTop: "10px",
-                                    backgroundColor: "#28a745",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Join Room
-                            </button>
-                            <button
-                                onClick={() => { setCallId(''); removeParticipantFromRoom(room.id) }}
-                                style={{
-                                    padding: "5px 10px",
-                                    marginTop: "10px",
-                                    backgroundColor: "#dc3545",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Exit Room
-                            </button>
-                        </li>
-                    ))
-                ) : (
-                    <p>No available rooms found.</p>
-                )}
-            </ul>
+        <div className="container mx-auto px-4 py-8">
+            <h1 className={`${Baloo.className} text-3xl font-extrabold text-center mb-8`}>IELTS Speaking Partner</h1>
+            <div className="text-center mb-8">
+                <Button
+                    onClick={createRoom}
+                    disabled={loading}
+                    size="lg"
+                    className={`${Baloo.className} bg-black font-bold`}
+                >
+                    {loading ? (
+                        <>Creating Room...</>
+                    ) : (
+                        <>
+                            <PlusCircle className="mr-2 h-4 w-4" /> Create New Room
+                        </>
+                    )}
+                </Button>
+            </div>
+            {rooms.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {rooms.map((room) => (
+                        <Card key={room.id} className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex justify-between items-center">
+                                    Room {room.id}
+                                    <Badge variant={room.participants.length > 2 ? "destructive" : "secondary"}>
+                                        {room.participants.length > 2 ? "Full" : "Available"}
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    <span>
+                                        {room.participants.length} / 2 Participants
+                                    </span>
+                                </div>
+                                <div>
+                                    {room.participants.map((p, index) => (
+                                        <Badge key={index} variant="outline" className="mr-2">
+                                            {p.name}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
+                                    disabled={room.isFull}
+                                    variant="outline"
+                                >
+                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
+                                </Button>
+                                <Button
+                                    onClick={() => { setCallId(''); removeParticipantFromRoom(room.id) }}
+                                    // disabled={callId !== room.id}
+                                    variant="destructive"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-center text-gray-500">No available rooms found.</p>
+            )}
         </div>
     );
 }

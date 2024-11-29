@@ -24,10 +24,8 @@ const steps: Step[] = [
 ];
 
 export default function App() {
-  const [showAlert, setShowAlert] = useState(false);
-  const [stage, setStage] = useState<'home' | 'form' | 'video'>('home');
+  const [stage, setStage] = useState<'home' | 'video'>('home');
   const [onlineCount, setOnlineCount] = useState(23044);
-  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,27 +36,16 @@ export default function App() {
   }, []);
 
   const handleButtonClick = () => {
-    if (!isSignedIn) {
-      setShowAlert(true);
-      return;
-    }
-    else setStage('form');
-  };
-
-  const handleCloseAlert = () => {
-    setShowAlert(false);
+    setStage('video');
   };
 
   return (
     <>
-      {showAlert && (
-        <><SignInButton />log in pls</>
-      )}
       {stage === 'home' && (
         <div className="z-[0] relative overflow-hidden rounded-xl m-2 flex items-center min-h-screen bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
           <div className="absolute inset-0 z-0">
             <img
-              src="/assets/video-confrencing-bg.jpg"
+              src="/video-confrencing-bg.jpg"
               alt="Background"
               className="w-full h-full object-cover blur"
             />
@@ -80,9 +67,6 @@ export default function App() {
             </div>
           </div>
         </div>
-      )}
-      {stage === 'form' && (
-        <Form setStage={setStage} />
       )}
       {stage === 'video' && (
         <div

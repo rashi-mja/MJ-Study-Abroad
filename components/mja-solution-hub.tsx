@@ -36,13 +36,13 @@ export default function MJASolutionHub() {
       </div>
 
       <div className="mb-24 flex flex-col sm:flex-row items-center gap-8 bg-gradient-to-t sm:bg-gradient-to-r from-white to-blue-400/40 w-[90%] rounded-3xl shadow-lg sm:shadow-none sm:rounded-r-[6rem] p-5 sm:p-10">
-        <div className="order-2 sm:order-none overflow-hidden rounded-[30px]">
+        <div className="order-2 sm:order-none overflow-hidden rounded-[30px] border">
           <Image
             width={800}
             height={500}
             src="/landingPage/SolutionHub2.png"
             alt="Classroom setting"
-            className="w-full h-full object-cover"
+            className="min-w-full min-h-full object-cover"
           />
         </div>
         <div className="px-5 order-1 sm:order-none">

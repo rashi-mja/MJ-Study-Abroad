@@ -24,10 +24,10 @@ export function Navbar() {
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-center space-x-8">
-                            <Link href="/study-abroad" className="text-gray-700 hover:text-gray-900">
+                            <Link href="/" className="text-gray-700 hover:text-gray-900">
                                 Study Abroad
                             </Link>
-                            <Link href="/test-preparation" className="text-gray-700 hover:text-gray-900">
+                            <Link href="/test-prepration" className="text-gray-700 hover:text-gray-900">
                                 Test Preparation
                             </Link>
                             <Link href="/services" className="text-gray-700 hover:text-gray-900">

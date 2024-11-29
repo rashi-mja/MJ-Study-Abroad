@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "../components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs"
+import Navbar2 from "@/components/Navbar2";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,7 +32,8 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Navbar />
+          {/* <Navbar /> */}
+          <Navbar2 />
           {children}
         </body>
       </html>

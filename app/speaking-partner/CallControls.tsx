@@ -15,7 +15,7 @@ const CustomEndCallButton = () => {
     if (call) {
       try {
         await call.leave();
-        window.location.href = '/study-partner';
+        window.location.href = '/speaking-partner';
       } catch (err) {
         console.error('Failed to leave the call', err);
       }
