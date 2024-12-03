@@ -1,0 +1,70 @@
+{
+    "sets": [
+        {
+            "setName": "Set 1",
+            "introduction": [
+                "Tell me about your hometown.",
+                "What do you do in your free time?",
+                "Do you prefer living in a big city or a small town?"
+            ],
+            "longTurn": {
+                "topic": "Describe a memorable holiday you had.",
+                "points": [
+                    "Where you went",
+                    "Who you went with",
+                    "What you did there",
+                    "Why it was memorable"
+                ]
+            },
+            "discussion": [
+                "Why do people like to travel?",
+                "What are the benefits of traveling?",
+                "Do you think travel can improve one's understanding of other cultures?"
+            ]
+        },
+        {
+            "setName": "Set 2",
+            "introduction": [
+                "What is your favorite type of food?",
+                "Do you like to cook?",
+                "How often do you eat out?"
+            ],
+            "longTurn": {
+                "topic": "Describe a book you recently read.",
+                "points": [
+                    "What the book is about",
+                    "Who the author is",
+                    "Why you decided to read it",
+                    "What you learned from it"
+                ]
+            },
+            "discussion": [
+                "What are the advantages of reading?",
+                "How has technology changed the way people read?",
+                "Do you think children should be encouraged to read more?"
+            ]
+        },
+        {
+            "setName": "Set 3",
+            "introduction": [
+                "Do you prefer indoor or outdoor activities?",
+                "What kind of sports do you enjoy?",
+                "Do you think exercise is important?"
+            ],
+            "longTurn": {
+                "topic": "Describe a time when you helped someone.",
+                "points": [
+                    "Who you helped",
+                    "How you helped them",
+                    "How they felt after your help",
+                    "Why it was meaningful to you"
+                ]
+            },
+            "discussion": [
+                "Why do people help each other?",
+                "What are some ways communities can support individuals in need?",
+                "Do you think people are less willing to help others nowadays?"
+            ]
+        }
+    ]
+}

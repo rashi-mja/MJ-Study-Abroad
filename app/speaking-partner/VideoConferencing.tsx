@@ -12,6 +12,7 @@ import { collection, getDocs, query, addDoc, doc, getDoc, updateDoc } from "fire
 import { db } from "../../firebaseConfig";
 import CustomCallControls from "./CallControls";
 import { Baloo_Bhai_2 } from 'next/font/google';
+import ShowSpeakingQuestions from "./SpeakingQuestionDisplay";
 
 const Baloo = Baloo_Bhai_2({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -84,15 +85,20 @@ export default function VideoConferencingRoom() {
     return (
         <>
             {call && (
-                <div className="min-h-screen bg-red-400 rounded-lg p-10">
-                    <StreamVideo client={client!}>
-                        <StreamTheme className="text-white my-theme-overrides">
-                            <StreamCall call={call}>
-                                <SpeakerLayout />
-                                <CustomCallControls />
-                            </StreamCall>
-                        </StreamTheme>
-                    </StreamVideo>
+                <div className="min-h-screen bg-gray-400 rounded-lg p-10 gap-10 flex">
+                    <div className="w-[50%]">
+                        <StreamVideo client={client!}>
+                            <StreamTheme className="text-white my-theme-overrides">
+                                <StreamCall call={call}>
+                                    <SpeakerLayout pageArrowsVisible={false} />
+                                    <CustomCallControls />
+                                </StreamCall>
+                            </StreamTheme>
+                        </StreamVideo>
+                    </div>
+                    <div className="w-[50%] border">
+                        <ShowSpeakingQuestions />
+                    </div>
                 </div>
             )}
             {!call && (
