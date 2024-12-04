@@ -135,27 +135,29 @@ export default function VideoConferencingRoom() {
     }, [selectedCallId]);
 
     const removeParticipantFromRoom = async (roomId: string) => {
-        try {
-            const roomRef = doc(db, "rooms", roomId);
-            const roomSnapshot = await getDoc(roomRef);
+        if (selectedCallId) {
+            try {
+                const roomRef = doc(db, "rooms", roomId);
+                const roomSnapshot = await getDoc(roomRef);
 
-            if (roomSnapshot.exists()) {
-                const roomData = roomSnapshot.data();
+                if (roomSnapshot.exists()) {
+                    const roomData = roomSnapshot.data();
 
-                const updatedParticipants = (roomData.participants || []).filter(
-                    (participant: any) => participant.userId !== user?.id
-                );
+                    const updatedParticipants = (roomData.participants || []).filter(
+                        (participant: any) => participant.userId !== user?.id
+                    );
 
-                await updateDoc(roomRef, { participants: updatedParticipants });
+                    await updateDoc(roomRef, { participants: updatedParticipants });
 
-                console.log(`Participant removed from room ${roomId}`);
-                sessionStorage.setItem("inroom", "false");
+                    console.log(`Participant removed from room ${roomId}`);
+                    sessionStorage.setItem("inroom", "false");
 
-                setCall(undefined);
-                setSelectedCallId(null);
+                    setCall(undefined);
+                    setSelectedCallId(null);
+                }
+            } catch (error) {
+                console.error("Error removing participant:", error);
             }
-        } catch (error) {
-            console.error("Error removing participant:", error);
         }
     };
 
@@ -284,7 +286,7 @@ function RoomList({
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className={`${Baloo.className} text-3xl font-extrabold text-center mb-8`}>IELTS Speaking Partner</h1>
-            <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-8 gap-5">
                 <Button
                     onClick={createRoom}
                     disabled={loading}
@@ -298,6 +300,24 @@ function RoomList({
                             <PlusCircle className="mr-2 h-4 w-4" /> Create New Room
                         </>
                     )}
+                </Button>
+                <Button
+                    onClick={fetchRooms}
+                    size="lg"
+                    variant="outline"
+                    className={`${Baloo.className} font-bold`}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        className="mr-2 h-4 w-4"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m-.582 0a7 7 0 0113.657 2M20 20v-5h-.581m.581 0a7 7 0 01-13.657-2" />
+                    </svg>
+                    Reload Rooms
                 </Button>
             </div>
             {rooms.length > 0 ? (
@@ -332,6 +352,7 @@ function RoomList({
                                     onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
                                     disabled={room.isFull}
                                     variant="outline"
+                                    className="font-bold"
                                 >
                                     <LogIn className="mr-2 h-4 w-4" /> Join Room
                                 </Button>
@@ -349,7 +370,7 @@ function RoomList({
                         <Card className="w-full">
                             <CardHeader>
                                 <CardTitle className="flex justify-between items-center">
-                                    Room 1
+                                    Room 3
                                     <Badge variant="destructive">
                                         Full
                                     </Badge>
@@ -363,12 +384,54 @@ function RoomList({
                                     </span>
                                 </div>
                                 <div>
-                                    <Badge variant="outline" className="mr-2">
+                                    {/* <Badge variant="outline" className="mr-2">
                                         Alice
                                     </Badge>
                                     <Badge variant="outline" className="mr-2">
                                         Bob
+                                    </Badge> */}
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    onClick={() => { }}
+                                    disabled={true}
+                                    variant="outline"
+                                >
+                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    // disabled={callId !== room.id}
+                                    variant="destructive"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex justify-between items-center">
+                                    Room 2
+                                    <Badge variant="destructive">
+                                        Full
                                     </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    <span>
+                                        2 / 2 Participants
+                                    </span>
+                                </div>
+                                <div>
+                                    {/* <Badge variant="outline" className="mr-2">
+                                        Mamta
+                                    </Badge>
+                                    <Badge variant="outline" className="mr-2">
+                                        Grace
+                                    </Badge> */}
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">
@@ -405,54 +468,12 @@ function RoomList({
                                     </span>
                                 </div>
                                 <div>
-                                    <Badge variant="outline" className="mr-2">
+                                    {/* <Badge variant="outline" className="mr-2">
                                         Alice
                                     </Badge>
                                     <Badge variant="outline" className="mr-2">
                                         Bob
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                            <CardFooter className="flex justify-between">
-                                <Button
-                                    onClick={() => { }}
-                                    disabled={true}
-                                    variant="outline"
-                                >
-                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
-                                </Button>
-                                <Button
-                                    onClick={() => { }}
-                                    // disabled={callId !== room.id}
-                                    variant="destructive"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
-                                </Button>
-                            </CardFooter>
-                        </Card>
-                        <Card className="w-full">
-                            <CardHeader>
-                                <CardTitle className="flex justify-between items-center">
-                                    Room 1
-                                    <Badge variant="destructive">
-                                        Full
-                                    </Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center mb-2">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    <span>
-                                        2 / 2 Participants
-                                    </span>
-                                </div>
-                                <div>
-                                    <Badge variant="outline" className="mr-2">
-                                        Alice
-                                    </Badge>
-                                    <Badge variant="outline" className="mr-2">
-                                        Bob
-                                    </Badge>
+                                    </Badge> */}
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">

@@ -9,8 +9,7 @@ export default function LandingPage() {
   return (
     <>
       <main className="min-h-[100vh] bg-[#E6F4FF]">
-        <div className='bg-gradient-to-b from-gray-50 to-slate-50/0 absolute h-20 w-full top-0 z-[49]' />
-        <div className="relative pt-16 sm:mt-5">
+        <div className="relative pt-16 ">
           <div className="absolute inset-0 z-0 min-h-screen">
             <Image
               src="/landingPage/WorldMapBG.png"

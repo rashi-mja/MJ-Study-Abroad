@@ -11,7 +11,7 @@ const signika = Signika({ subsets: ['latin'], weight: ['300', '400', '700'] });
 export default function Navbar2() {
     const pathname = usePathname()
     return (
-        <header className={`${signika.className} ${pathname === "/" && "absolute"} z-50 flex h-26 w-full shrink-0 items-center justify-between px-4 md:px-6 bg-white py-2 rounded-b-lg shadow-lg`}>
+        <header className={`${signika.className} ${pathname === "/" ? "absolute bg-gradient-to-b from-gray-50 to-slate-50/0 shadow-none" : "bg-white shadow-lg"} z-50 flex h-26 w-full shrink-0 items-center justify-between px-4 md:px-6 py-2 rounded-b-lg `}>
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon" className="lg:hidden">
@@ -64,12 +64,12 @@ export default function Navbar2() {
                 <Link href="/test-prepration" className="text-gray-700 hover:text-gray-900">
                     Test Preparation
                 </Link>
-                <Link href="/services" className="text-gray-700 hover:text-gray-900">
+                {/* <Link href="/services" className="text-gray-700 hover:text-gray-900">
                     Services
                 </Link>
                 <Link href="/blog" className="text-gray-700 hover:text-gray-900">
                     Blog
-                </Link>
+                </Link> */}
                 <Link href="/speaking-partner" className="text-gray-700 hover:text-gray-900">
                     Fing IELTS Speaking Partner
                 </Link>

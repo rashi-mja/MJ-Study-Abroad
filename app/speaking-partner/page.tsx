@@ -63,7 +63,7 @@ export default function App() {
             </button>
             <div className="flex items-center mb-4">
               <span className="bg-green-500 text-white px-2 py-1 rounded-full">100% free!</span>
-              <span className="ml-2 text-white animate-pulse">{onlineCount} Online</span>
+              {/* <span className="ml-2 text-white animate-pulse">{onlineCount} Online</span> */}
             </div>
           </div>
         </div>
