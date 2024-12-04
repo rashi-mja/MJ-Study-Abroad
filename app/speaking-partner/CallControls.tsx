@@ -8,16 +8,20 @@ import {
 import React from 'react';
 import { Phone } from 'lucide-react';
 
-const CustomEndCallButton = () => {
+const CustomEndCallButton = ({ roomId, removeParticipant }: { roomId: string; removeParticipant: (roomId: string) => void }) => {
   const call = useCall();
 
   const handleEndCall = async () => {
     if (call) {
       try {
+        // Remove participant from room
+        await removeParticipant(roomId);
+
+        // Leave the call
         await call.leave();
-        window.location.href = '/speaking-partner';
-      } catch (err) {
-        console.error('Failed to leave the call', err);
+        console.log("Call ended successfully");
+      } catch (error) {
+        console.error("Failed to end the call:", error);
       }
     }
   };
@@ -29,7 +33,7 @@ const CustomEndCallButton = () => {
   );
 };
 
-const CustomCallControls = () => {
+const CustomCallControls = ({ roomId, removeParticipant }: { roomId: string; removeParticipant: (roomId: string) => void }) => {
   return (
     <div className="str-video__call-controls items-center justify-center flex space-x-2">
       <SpeakingWhileMutedNotification>
@@ -37,7 +41,7 @@ const CustomCallControls = () => {
       </SpeakingWhileMutedNotification>
       <ToggleVideoPublishingButton />
       <ScreenShareButton />
-      <CustomEndCallButton />
+      <CustomEndCallButton roomId={roomId} removeParticipant={removeParticipant} />
     </div>
   );
 };

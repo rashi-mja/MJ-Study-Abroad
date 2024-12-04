@@ -40,10 +40,11 @@ type Room = {
 };
 
 export default function VideoConferencingRoom() {
-    const { user } = useUser();
     const [client, setClient] = useState<StreamVideoClient>();
     const [call, setCall] = useState<Call>();
     const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
+    const { user } = useUser();
+    const [randomModuleSetFromFirebase, setRandomModuleSetFromFirebase] = useState<number[] | null>(null); // Add state for randomModuleSet
 
     // Initialize Stream Video Client
     useEffect(() => {
@@ -82,36 +83,114 @@ export default function VideoConferencingRoom() {
         };
     }, [client, selectedCallId]);
 
+    useEffect(() => {
+        const fetchRandomModuleSet = async () => {
+            if (!selectedCallId) return;
+
+            try {
+                const roomRef = doc(db, "rooms", selectedCallId);
+                const roomSnapshot = await getDoc(roomRef);
+
+                if (roomSnapshot.exists()) {
+                    const roomData = roomSnapshot.data();
+                    setRandomModuleSetFromFirebase(roomData.randomModuleSet || []);
+                }
+            } catch (error) {
+                console.error("Error fetching randomModuleSet:", error);
+            }
+        };
+
+        fetchRandomModuleSet();
+    }, [selectedCallId]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault(); // Trigger browser confirmation dialog
+            event.returnValue = ""; // Necessary for dialog to work
+
+            const payload = {
+                roomId: selectedCallId,
+                userId: user?.id,
+            };
+
+            // Using fetch to call the API
+            fetch("/api/removeParticipant", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .then((data) => console.log("API Response:", data))
+                .catch((err) => console.error("Error in API call:", err));
+        };
+
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [selectedCallId]);
+
+    const removeParticipantFromRoom = async (roomId: string) => {
+        try {
+            const roomRef = doc(db, "rooms", roomId);
+            const roomSnapshot = await getDoc(roomRef);
+
+            if (roomSnapshot.exists()) {
+                const roomData = roomSnapshot.data();
+
+                const updatedParticipants = (roomData.participants || []).filter(
+                    (participant: any) => participant.userId !== user?.id
+                );
+
+                await updateDoc(roomRef, { participants: updatedParticipants });
+
+                console.log(`Participant removed from room ${roomId}`);
+                sessionStorage.setItem("inroom", "false");
+
+                setCall(undefined);
+                setSelectedCallId(null);
+            }
+        } catch (error) {
+            console.error("Error removing participant:", error);
+        }
+    };
+
     return (
-        <>
-            {call && (
-                <div className="min-h-screen bg-gray-400 rounded-lg p-10 gap-10 flex">
-                    <div className="w-[50%]">
+        <div className="mb-5">
+            {call && selectedCallId && (
+                <div className="min-h-screen bg-white shadow-2xl rounded-lg p-10 gap-10 flex-col md:flex-row flex bg-cover bg-center" style={{ backgroundImage: `url(/lib-bg.jpg)`, }}>
+                    <div className="md:w-[50%]">
                         <StreamVideo client={client!}>
                             <StreamTheme className="text-white my-theme-overrides">
                                 <StreamCall call={call}>
                                     <SpeakerLayout pageArrowsVisible={false} />
-                                    <CustomCallControls />
+                                    <CustomCallControls removeParticipant={removeParticipantFromRoom} roomId={selectedCallId} />
                                 </StreamCall>
                             </StreamTheme>
                         </StreamVideo>
                     </div>
-                    <div className="w-[50%] border">
-                        <ShowSpeakingQuestions />
+                    <div className="md:w-[50%] roudned-lg">
+                        <ShowSpeakingQuestions randomModuleSetFromFirebase={randomModuleSetFromFirebase} />
                     </div>
                 </div>
             )}
             {!call && (
-                <RoomList setCallId={setSelectedCallId} />
+                <RoomList setCallId={setSelectedCallId} removeParticipantFromRoom={removeParticipantFromRoom} />
             )}
-        </>
+        </div>
     );
 }
 
 function RoomList({
     setCallId,
+    removeParticipantFromRoom,
 }: {
     setCallId: (callId: string) => void;
+    removeParticipantFromRoom: (roomId: string) => void;
 }) {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(false);
@@ -138,9 +217,14 @@ function RoomList({
         try {
             setLoading(true);
 
+            const range = Array.from({ length: 20 }, (_, i) => i + 1); // [1, 2, ..., 20]
+            const shuffled = range.sort(() => Math.random() - 0.5); // Shuffle the array
+            const randomModuleSet = shuffled.slice(0, 20); // Take the first 20 elements
+
             const newRoom = {
                 isFull: false,
                 participants: [],
+                randomModuleSet
             };
 
             const docRef = await addDoc(collection(db, "rooms"), newRoom);
@@ -179,6 +263,7 @@ function RoomList({
 
                 console.log(`Participant added to room ${roomId} successfully!`);
 
+                sessionStorage.setItem("inroom", "true");
                 // Optionally refresh the room list
                 fetchRooms();
 
@@ -189,33 +274,6 @@ function RoomList({
             }
         } catch (error) {
             console.error("Error adding participant to the room:", error);
-        }
-    };
-
-    const removeParticipantFromRoom = async (roomId: string) => {
-        try {
-            const roomRef = doc(db, "rooms", roomId);
-            const roomSnapshot = await getDoc(roomRef);
-
-            if (roomSnapshot.exists()) {
-                const roomData = roomSnapshot.data();
-
-                // Filter out the current user from the participants array
-                const updatedParticipants = (roomData.participants || []).filter(
-                    (participant: any) => participant.userId !== user?.id
-                );
-
-                await updateDoc(roomRef, {
-                    participants: updatedParticipants,
-                });
-
-                console.log(`Participant removed from room ${roomId} successfully!`);
-                fetchRooms();
-            } else {
-                console.error("Room does not exist.");
-            }
-        } catch (error) {
-            console.error("Error removing participant from the room:", error);
         }
     };
 
@@ -287,6 +345,134 @@ function RoomList({
                             </CardFooter>
                         </Card>
                     ))}
+                    <>
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex justify-between items-center">
+                                    Room 1
+                                    <Badge variant="destructive">
+                                        Full
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    <span>
+                                        2 / 2 Participants
+                                    </span>
+                                </div>
+                                <div>
+                                    <Badge variant="outline" className="mr-2">
+                                        Alice
+                                    </Badge>
+                                    <Badge variant="outline" className="mr-2">
+                                        Bob
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    onClick={() => { }}
+                                    disabled={true}
+                                    variant="outline"
+                                >
+                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    // disabled={callId !== room.id}
+                                    variant="destructive"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex justify-between items-center">
+                                    Room 1
+                                    <Badge variant="destructive">
+                                        Full
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    <span>
+                                        2 / 2 Participants
+                                    </span>
+                                </div>
+                                <div>
+                                    <Badge variant="outline" className="mr-2">
+                                        Alice
+                                    </Badge>
+                                    <Badge variant="outline" className="mr-2">
+                                        Bob
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    onClick={() => { }}
+                                    disabled={true}
+                                    variant="outline"
+                                >
+                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    // disabled={callId !== room.id}
+                                    variant="destructive"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex justify-between items-center">
+                                    Room 1
+                                    <Badge variant="destructive">
+                                        Full
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center mb-2">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    <span>
+                                        2 / 2 Participants
+                                    </span>
+                                </div>
+                                <div>
+                                    <Badge variant="outline" className="mr-2">
+                                        Alice
+                                    </Badge>
+                                    <Badge variant="outline" className="mr-2">
+                                        Bob
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    onClick={() => { }}
+                                    disabled={true}
+                                    variant="outline"
+                                >
+                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    // disabled={callId !== room.id}
+                                    variant="destructive"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </>
                 </div>
             ) : (
                 <p className="text-center text-gray-500">No available rooms found.</p>

@@ -71,11 +71,7 @@ export default function App() {
       {stage === 'video' && (
         <div
           style={{
-            backgroundImage: `url(/assets/lib-bg.jpg)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             width: '100%',
-            height: '100vh',
             borderRadius: '0.5rem',
             padding: '1rem',
           }}

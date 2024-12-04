@@ -65,6 +65,380 @@
                 "What are some ways communities can support individuals in need?",
                 "Do you think people are less willing to help others nowadays?"
             ]
+        },
+        {
+            "setName": "Set 4",
+            "introduction": [
+                "What do you do to relax?",
+                "Do you enjoy spending time alone or with others?",
+                "How often do you take breaks during your day?"
+            ],
+            "longTurn": {
+                "topic": "Describe a skill you want to learn.",
+                "points": [
+                    "What the skill is",
+                    "Why you want to learn it",
+                    "How you plan to learn it",
+                    "What challenges you might face"
+                ]
+            },
+            "discussion": [
+                "Why is learning new skills important?",
+                "How can people stay motivated to learn?",
+                "Do you think it’s harder to learn new skills as you get older?"
+            ]
+        },
+        {
+            "setName": "Set 5",
+            "introduction": [
+                "What kind of music do you like?",
+                "Do you prefer live music or recorded music?",
+                "How often do you listen to music?"
+            ],
+            "longTurn": {
+                "topic": "Describe a concert you attended.",
+                "points": [
+                    "Who performed",
+                    "Where it was held",
+                    "What the atmosphere was like",
+                    "Why it was memorable"
+                ]
+            },
+            "discussion": [
+                "Why do people enjoy live music?",
+                "How has technology influenced music?",
+                "Do you think traditional music is still important today?"
+            ]
+        },
+        {
+            "setName": "Set 6",
+            "introduction": [
+                "What is your favorite way to spend a weekend?",
+                "Do you like to plan activities or be spontaneous?",
+                "How do you usually spend your evenings?"
+            ],
+            "longTurn": {
+                "topic": "Describe a movie you enjoyed watching.",
+                "points": [
+                    "What the movie was about",
+                    "Who you watched it with",
+                    "Why you enjoyed it",
+                    "What made it special"
+                ]
+            },
+            "discussion": [
+                "Why do people watch movies?",
+                "Do you think movies have a positive influence on society?",
+                "How has streaming changed the way people watch movies?"
+            ]
+        },
+        {
+            "setName": "Set 7",
+            "introduction": [
+                "What is your favorite season?",
+                "Do you enjoy spending time outdoors?",
+                "How do you prepare for different weather conditions?"
+            ],
+            "longTurn": {
+                "topic": "Describe a time you experienced extreme weather.",
+                "points": [
+                    "What the weather was like",
+                    "Where you were",
+                    "How you coped with it",
+                    "How it affected you"
+                ]
+            },
+            "discussion": [
+                "How does weather influence daily life?",
+                "What are some ways people can adapt to climate change?",
+                "Do you think weather affects people’s moods?"
+            ]
+        },
+        {
+            "setName": "Set 8",
+            "introduction": [
+                "Do you like shopping?",
+                "How do you decide what to buy?",
+                "Do you prefer shopping online or in stores?"
+            ],
+            "longTurn": {
+                "topic": "Describe a gift you gave to someone.",
+                "points": [
+                    "Who you gave it to",
+                    "What the gift was",
+                    "Why you chose it",
+                    "How they reacted"
+                ]
+            },
+            "discussion": [
+                "Why do people give gifts?",
+                "How important is the act of giving compared to the gift itself?",
+                "Do you think people spend too much money on gifts?"
+            ]
+        },
+        {
+            "setName": "Set 9",
+            "introduction": [
+                "What is your favorite holiday?",
+                "Do you celebrate any traditional festivals?",
+                "How do you usually spend special occasions?"
+            ],
+            "longTurn": {
+                "topic": "Describe a family celebration you attended.",
+                "points": [
+                    "What the occasion was",
+                    "Who attended",
+                    "What activities you enjoyed",
+                    "Why it was special"
+                ]
+            },
+            "discussion": [
+                "How do festivals bring people together?",
+                "Do you think traditional festivals are losing their significance?",
+                "How can people keep traditions alive?"
+            ]
+        },
+        {
+            "setName": "Set 10",
+            "introduction": [
+                "Do you enjoy working with others?",
+                "What do you think makes a good teammate?",
+                "Have you ever been part of a successful team?"
+            ],
+            "longTurn": {
+                "topic": "Describe a project you worked on.",
+                "points": [
+                    "What the project was",
+                    "Who you worked with",
+                    "What your role was",
+                    "What the outcome was"
+                ]
+            },
+            "discussion": [
+                "Why is teamwork important?",
+                "What are the challenges of working in a team?",
+                "Do you think technology helps or hinders teamwork?"
+            ]
+        },
+        {
+            "setName": "Set 11",
+            "introduction": [
+                "What is your favorite form of entertainment?",
+                "Do you prefer watching TV shows or movies?",
+                "How often do you go to the theater or cinema?"
+            ],
+            "longTurn": {
+                "topic": "Describe a hobby you enjoy.",
+                "points": [
+                    "What the hobby is",
+                    "How you started doing it",
+                    "Why you enjoy it",
+                    "How it benefits you"
+                ]
+            },
+            "discussion": [
+                "Why do people need hobbies?",
+                "What are some popular hobbies in your country?",
+                "Do you think technology has changed how people pursue hobbies?"
+            ]
+        },
+        {
+            "setName": "Set 12",
+            "introduction": [
+                "What is your favorite app?",
+                "How often do you use your phone?",
+                "Do you think apps have made life easier?"
+            ],
+            "longTurn": {
+                "topic": "Describe a useful app you use.",
+                "points": [
+                    "What the app is",
+                    "What it is used for",
+                    "Why you find it useful",
+                    "How it has helped you"
+                ]
+            },
+            "discussion": [
+                "How have smartphones impacted daily life?",
+                "Do you think people rely too much on technology?",
+                "What are the potential drawbacks of using apps?"
+            ]
+        },
+        {
+            "setName": "Set 13",
+            "introduction": [
+                "What is your favorite sport to watch?",
+                "Do you prefer individual sports or team sports?",
+                "Have you ever participated in a sports event?"
+            ],
+            "longTurn": {
+                "topic": "Describe a sporting event you attended.",
+                "points": [
+                    "What the event was",
+                    "Who participated",
+                    "What the atmosphere was like",
+                    "Why it was memorable"
+                ]
+            },
+            "discussion": [
+                "What are the benefits of playing sports?",
+                "Why do some people enjoy watching sports more than playing?",
+                "Do you think sports build character?"
+            ]
+        },
+        {
+            "setName": "Set 14",
+            "introduction": [
+                "What kind of transportation do you use the most?",
+                "Do you prefer public transport or private vehicles?",
+                "How often do you travel long distances?"
+            ],
+            "longTurn": {
+                "topic": "Describe a memorable trip you had.",
+                "points": [
+                    "Where you went",
+                    "How you traveled",
+                    "What you did there",
+                    "Why it was memorable"
+                ]
+            },
+            "discussion": [
+                "What are the benefits of public transportation?",
+                "How can transportation systems be improved?",
+                "Do you think electric vehicles are the future of transportation?"
+            ]
+        },
+        {
+            "setName": "Set 15",
+            "introduction": [
+                "What is your daily routine like?",
+                "Do you prefer having a set schedule or being flexible?",
+                "How do you manage your time?"
+            ],
+            "longTurn": {
+                "topic": "Describe a productive day you had.",
+                "points": [
+                    "What you accomplished",
+                    "How you planned your day",
+                    "What challenges you faced",
+                    "How you felt at the end of the day"
+                ]
+            },
+            "discussion": [
+                "Why is time management important?",
+                "What are some strategies for staying productive?",
+                "Do you think technology helps or hinders productivity?"
+            ]
+        },
+        {
+            "setName": "Set 16",
+            "introduction": [
+                "What kind of books do you like to read?",
+                "Who is your favorite author?",
+                "How often do you visit a library?"
+            ],
+            "longTurn": {
+                "topic": "Describe a library you have visited.",
+                "points": [
+                    "Where it is located",
+                    "What facilities it offers",
+                    "What you did there",
+                    "Why it left an impression on you"
+                ]
+            },
+            "discussion": [
+                "Why are libraries important?",
+                "How has the role of libraries changed over time?",
+                "Do you think e-books will replace physical books?"
+            ]
+        },
+        {
+            "setName": "Set 17",
+            "introduction": [
+                "What is your favorite kind of weather?",
+                "How does weather affect your mood?",
+                "Do you enjoy seasonal changes?"
+            ],
+            "longTurn": {
+                "topic": "Describe your favorite season.",
+                "points": [
+                    "What the season is",
+                    "Why you like it",
+                    "What activities you enjoy during it",
+                    "How it affects your daily life"
+                ]
+            },
+            "discussion": [
+                "How do seasons affect people’s lifestyle?",
+                "What are the advantages of living in a place with distinct seasons?",
+                "Do you think climate change is affecting seasons?"
+            ]
+        },
+        {
+            "setName": "Set 18",
+            "introduction": [
+                "What is your favorite holiday destination?",
+                "Do you prefer beaches or mountains?",
+                "How often do you go on vacation?"
+            ],
+            "longTurn": {
+                "topic": "Describe a place you would like to visit.",
+                "points": [
+                    "Where the place is",
+                    "Why you want to go there",
+                    "What you plan to do there",
+                    "How you heard about it"
+                ]
+            },
+            "discussion": [
+                "Why do people like exploring new places?",
+                "How does traveling broaden one’s perspective?",
+                "Do you think tourism has a negative impact on some locations?"
+            ]
+        },
+        {
+            "setName": "Set 19",
+            "introduction": [
+                "What is your favorite subject in school?",
+                "Do you enjoy studying alone or with friends?",
+                "What motivates you to study?"
+            ],
+            "longTurn": {
+                "topic": "Describe a teacher who inspired you.",
+                "points": [
+                    "Who the teacher was",
+                    "What subject they taught",
+                    "How they inspired you",
+                    "What impact they had on you"
+                ]
+            },
+            "discussion": [
+                "What makes a good teacher?",
+                "Why is education important?",
+                "How has the role of teachers changed over the years?"
+            ]
+        },
+        {
+            "setName": "Set 20",
+            "introduction": [
+                "What is your favorite kind of art?",
+                "Do you like visiting art galleries?",
+                "Have you ever tried creating art?"
+            ],
+            "longTurn": {
+                "topic": "Describe an artwork or artist you admire.",
+                "points": [
+                    "What the artwork is",
+                    "Who the artist is",
+                    "Why you admire it",
+                    "How it inspires you"
+                ]
+            },
+            "discussion": [
+                "Why is art important in society?",
+                "How can art influence people’s emotions?",
+                "Do you think art should be taught in schools?"
+            ]
         }
     ]
 }

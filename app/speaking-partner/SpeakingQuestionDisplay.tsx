@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import questionsData from "./speakingQuestionSets.json"; // Adjust the path as needed
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 type QuestionSet = {
     setName: string;
@@ -11,16 +12,20 @@ type QuestionSet = {
     discussion: string[];
 };
 
-export default function ShowSpeakingQuestions() {
+export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: { randomModuleSetFromFirebase: number[] | null }) {
     const [currentSet, setCurrentSet] = useState<QuestionSet | null>(null);
     const [currentModule, setCurrentModule] = useState<"introduction" | "longTurn" | "discussion">("introduction");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isTestStarted, setIsTestStarted] = useState(false);
     const [isLastQuestion, setIsLastQuestion] = useState(false)
+
     useEffect(() => {
-        const randomSet = questionsData.sets[Math.floor(Math.random() * questionsData.sets.length)];
-        setCurrentSet(randomSet);
-    }, []);
+        if (randomModuleSetFromFirebase) {
+            // Use the first value of randomModuleSet to determine the question set
+            const ModuleSetFromFirebase = randomModuleSetFromFirebase[0] % questionsData.sets.length;
+            setCurrentSet(questionsData.sets[ModuleSetFromFirebase]);
+        }
+    }, [randomModuleSetFromFirebase]);
 
     const startTest = () => {
         setIsTestStarted(true); // Begin the test
@@ -43,11 +48,13 @@ export default function ShowSpeakingQuestions() {
             // Move to the next module
             if (currentModule === "introduction") {
                 setCurrentModule("longTurn");
+                setIsLastQuestion(false);
             } else if (currentModule === "discussion") {
                 // Switch participant
                 setCurrentModule("introduction");
                 setCurrentQuestionIndex(0);
                 setCurrentSet(questionsData.sets[Math.floor(Math.random() * questionsData.sets.length)])
+                setIsLastQuestion(false);
             }
         }
     };
@@ -79,48 +86,60 @@ export default function ShowSpeakingQuestions() {
         }
     };
 
-
     if (!currentSet) return <div>Loading...</div>;
     const currentQuestion = currentModule === "longTurn" ? currentSet.longTurn.topic : currentSet[currentModule][currentQuestionIndex];
 
     return (
-        <div className="bg-red-500 w-full h-full p-4 text-white">
-            {isTestStarted ? (
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold">
-                        Speaking Section Question Set
-                    </h2>
-                    <p className="text-xl mt-4">Module: {currentModule}</p>
-                    <p className="text-lg mt-2">{currentQuestion}</p>
-                    <button
-                        onClick={handleNextQuestion}
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        {isLastQuestion ? "Next Set" : "Next Question"}
-                    </button>
-                    <button
-                        onClick={handlePrevQuestion}
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Prev Question
-                    </button>
-                </div>
-            ) : (
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold mb-4">Read Rules Before Starting</h1>
-                    <p className="text-lg mb-6">
-                        Both Participants are given diffrent Module sets
-                        <br />
-                        Decide among yourself who wants to start asking question first.
-                    </p>
-                    <button
-                        onClick={startTest}
-                        className="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700"
-                    >
-                        Start Speaking Section
-                    </button>
-                </div>
-            )}
+        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-4 rounded-3xl">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden">
+                {isTestStarted ? (
+                    <div className="p-5 md:p-8">
+                        <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
+                            Speaking Section
+                        </h2>
+                        <div className="bg-gray-100 rounded-lg p-6 mb-6">
+                            <p className="text-base md:text-xl font-semibold text-gray-700 mb-2">Module: {currentModule.charAt(0).toUpperCase() + currentModule.slice(1)}</p>
+                            <p className="text-base md:text-lg text-gray-600">{currentQuestion}</p>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <button
+                                onClick={handlePrevQuestion}
+                                className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                                aria-label="Previous Question"
+                            >
+                                <ArrowLeft className="w-5 h-5 mr-2" />
+                                Prev
+                            </button>
+                            <button
+                                onClick={handleNextQuestion}
+                                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+                                aria-label="Next Question"
+                            >
+                                {isLastQuestion ? "Next Set" : "Next"}
+                                <ArrowRight className="w-5 h-5 ml-2" />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="p-8 text-center">
+                        <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-6">Speaking Section Rules</h1>
+                        <div className="bg-blue-100 rounded-lg p-6 mb-6">
+                            <p className="text-base md:text-lg text-gray-700 mb-4">
+                                Both participants are given different module sets.
+                            </p>
+                            <p className="text-base md:text-lg text-gray-700">
+                                Decide among yourselves who wants to start asking questions first.
+                            </p>
+                        </div>
+                        <button
+                            onClick={startTest}
+                            className="px-8 py-3 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+                        >
+                            Start Speaking Section
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
