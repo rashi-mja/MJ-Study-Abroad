@@ -313,9 +313,9 @@ function RoomList({
     }, []);
 
     return (
-        <div className={`${Baloo.className} container mx-auto px-4 py-8`}>
+        <div className={`${Baloo.className} bg-gradient-to-b from-yellow-300 to-yellow-100 rounded-lg container mx-auto px-4 py-8`}>
             <h1 className={`${Baloo.className} text-3xl font-extrabold text-center mb-8`}>IELTS Speaking Partner</h1>
-            <div className="flex items-center justify-center mb-8 gap-5">
+            <div className="flex flex-col sm:flex-row items-center justify-center mb-8 gap-5">
                 <Button
                     onClick={createRoom}
                     disabled={loading}
@@ -376,7 +376,7 @@ function RoomList({
                                     ))}
                                 </div>
                             </CardContent>
-                            <CardFooter className="flex justify-between">
+                            <CardFooter className="flex justify-between gap-2">
                                 <Button
                                     onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
                                     disabled={room.isFull}
