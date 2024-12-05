@@ -26,18 +26,27 @@ const steps: Step[] = [
 export default function App() {
   const [stage, setStage] = useState<'home' | 'video'>('home');
   const [onlineCount, setOnlineCount] = useState(23044);
+  const { user, isLoaded } = useUser()
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOnlineCount((prevCount) => prevCount + Math.floor(Math.random() * 10) + 1);
-    }, 2000);
+    if (stage === 'home') {
+      const interval = setInterval(() => {
+        setOnlineCount((prevCount) => prevCount + Math.floor(Math.random() * 10) + 1);
+      }, 2000);
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
+      return () => clearInterval(interval);
+    }
+  }, [stage]);
 
   const handleButtonClick = () => {
     setStage('video');
   };
+
+  useEffect(() => {
+    if (user && isLoaded) {
+      setStage('video');
+    }
+  }, [user, isLoaded]);
 
   return (
     <>

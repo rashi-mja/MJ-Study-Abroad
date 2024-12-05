@@ -104,34 +104,35 @@ export default function VideoConferencingRoom() {
     }, [selectedCallId]);
 
     useEffect(() => {
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            event.preventDefault(); // Trigger browser confirmation dialog
-            event.returnValue = ""; // Necessary for dialog to work
+        if (user) {
+            const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+                event.preventDefault(); // Trigger browser confirmation dialog
+                event.returnValue = ""; // Necessary for dialog to work
 
-            const payload = {
-                roomId: selectedCallId,
-                userId: user?.id,
+                const payload = {
+                    roomId: selectedCallId,
+                    userId: user?.id,
+                };
+
+                // Using fetch to call the API
+                fetch("/api/removeParticipant", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                })
+                    .then((res) => res.json())
+                    .then((data) => console.log("API Response:", data))
+                    .catch((err) => console.error("Error in API call:", err));
             };
 
-            // Using fetch to call the API
-            fetch("/api/removeParticipant", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            })
-                .then((res) => res.json())
-                .then((data) => console.log("API Response:", data))
-                .catch((err) => console.error("Error in API call:", err));
-        };
+            window.addEventListener("beforeunload", handleBeforeUnload);
 
-
-        window.addEventListener("beforeunload", handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-        };
+            return () => {
+                window.removeEventListener("beforeunload", handleBeforeUnload);
+            };
+        }
     }, [selectedCallId]);
 
     const removeParticipantFromRoom = async (roomId: string) => {
@@ -197,6 +198,8 @@ function RoomList({
     const [rooms, setRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(false);
     const { user } = useUser();
+    const [isCreateRoomCooldown, setIsCreateRoomCooldown] = useState(false); // Cooldown state
+    const [CreateRoomcooldownTimer, setCreateRoomCooldownTimer] = useState(0); // Timer for display
 
     const fetchRooms = async () => {
         try {
@@ -215,67 +218,93 @@ function RoomList({
         }
     };
 
+    const startCreateRoomCoolDownTimer = () => {
+        const timerInterval = setInterval(() => {
+            setCreateRoomCooldownTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerInterval); // Stop the interval when the timer reaches 0
+                    setIsCreateRoomCooldown(false); // Reset the cooldown state
+                    return 0; // Reset the timer
+                }
+                return prev - 1; // Decrement the timer
+            });
+        }, 60 * 1000); // Run every minute
+    };
+
     const createRoom = async () => {
-        try {
-            setLoading(true);
+        if (isCreateRoomCooldown) {
+            alert(`Please wait for ${CreateRoomcooldownTimer} minute(s) before creating another room.`);
+            return;
+        } else {
+            try {
+                setLoading(true);
 
-            const range = Array.from({ length: 20 }, (_, i) => i + 1); // [1, 2, ..., 20]
-            const shuffled = range.sort(() => Math.random() - 0.5); // Shuffle the array
-            const randomModuleSet = shuffled.slice(0, 20); // Take the first 20 elements
+                const range = Array.from({ length: 20 }, (_, i) => i + 1); // [1, 2, ..., 20]
+                const shuffled = range.sort(() => Math.random() - 0.5); // Shuffle the array
+                const randomModuleSet = shuffled.slice(0, 20); // Take the first 20 elements
 
-            const newRoom = {
-                isFull: false,
-                participants: [],
-                randomModuleSet
-            };
+                const newRoom = {
+                    isFull: false,
+                    participants: [],
+                    randomModuleSet
+                };
 
-            const docRef = await addDoc(collection(db, "rooms"), newRoom);
-            console.log("Room created with ID:", docRef.id);
+                const docRef = await addDoc(collection(db, "rooms"), newRoom);
+                console.log("Room created with ID:", docRef.id);
 
-            // Refresh the room list after creation
-            fetchRooms();
-        } catch (error) {
-            console.error("Error creating room:", error);
-        } finally {
-            setLoading(false);
+                await fetchRooms();
+
+                setIsCreateRoomCooldown(true);
+                setCreateRoomCooldownTimer(3);
+                startCreateRoomCoolDownTimer()
+
+            } catch (error) {
+                console.error("Error creating room:", error);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
     const addParticipantToRoom = async (roomId: string) => {
-        try {
-            const roomRef = doc(db, "rooms", roomId);
-            const roomSnapshot = await getDoc(roomRef);
+        if (!user) {
+            window.location.href = "https://special-dingo-3.accounts.dev/sign-in?redirect_url=https%3A%2F%2Fielts-go-global.vercel.app%2Fspeaking-partner"
+        } else {
+            try {
+                const roomRef = doc(db, "rooms", roomId);
+                const roomSnapshot = await getDoc(roomRef);
 
-            if (roomSnapshot.exists()) {
-                const roomData = roomSnapshot.data();
+                if (roomSnapshot.exists()) {
+                    const roomData = roomSnapshot.data();
 
-                // Add the current user as a participant
-                const updatedParticipants = [
-                    ...(roomData.participants || []),
-                    {
-                        name: user?.fullName || "Anonymous",
-                        userId: user?.id,
-                        lastActive: Date.now(),
-                    },
-                ];
+                    // Add the current user as a participant
+                    const updatedParticipants = [
+                        ...(roomData.participants || []),
+                        {
+                            name: user?.fullName || "Anonymous",
+                            userId: user?.id,
+                            lastActive: Date.now(),
+                        },
+                    ];
 
-                await updateDoc(roomRef, {
-                    participants: updatedParticipants,
-                });
+                    await updateDoc(roomRef, {
+                        participants: updatedParticipants,
+                    });
 
-                console.log(`Participant added to room ${roomId} successfully!`);
+                    console.log(`Participant added to room ${roomId} successfully!`);
 
-                sessionStorage.setItem("inroom", "true");
-                // Optionally refresh the room list
-                fetchRooms();
+                    sessionStorage.setItem("inroom", "true");
+                    // Optionally refresh the room list
+                    fetchRooms();
 
-                // Set the selected call ID
-                setCallId(roomId);
-            } else {
-                console.error("Room does not exist.");
+                    // Set the selected call ID
+                    setCallId(roomId);
+                } else {
+                    console.error("Room does not exist.");
+                }
+            } catch (error) {
+                console.error("Error adding participant to the room:", error);
             }
-        } catch (error) {
-            console.error("Error adding participant to the room:", error);
         }
     };
 
@@ -284,7 +313,7 @@ function RoomList({
     }, []);
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className={`${Baloo.className} container mx-auto px-4 py-8`}>
             <h1 className={`${Baloo.className} text-3xl font-extrabold text-center mb-8`}>IELTS Speaking Partner</h1>
             <div className="flex items-center justify-center mb-8 gap-5">
                 <Button
@@ -297,7 +326,7 @@ function RoomList({
                         <>Creating Room...</>
                     ) : (
                         <>
-                            <PlusCircle className="mr-2 h-4 w-4" /> Create New Room
+                            {isCreateRoomCooldown ? `Wait ${CreateRoomcooldownTimer} min(s)` : <>{<PlusCircle className="mr-2 h-4 w-4" />} Create New Room</>}
                         </>
                     )}
                 </Button>
@@ -352,14 +381,14 @@ function RoomList({
                                     onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
                                     disabled={room.isFull}
                                     variant="outline"
-                                    className="font-bold"
+                                    className={!room.isFull ? "bg-green-600 font-bold text-white hover:bg-green-500 hover:text-white" : "destructive font-bold"}
                                 >
                                     <LogIn className="mr-2 h-4 w-4" /> Join Room
                                 </Button>
                                 <Button
                                     onClick={() => { setCallId(''); removeParticipantFromRoom(room.id) }}
-                                    // disabled={callId !== room.id}
-                                    variant="destructive"
+                                    disabled={room.isFull}
+                                    variant={!room.isFull ? "outline" : "destructive"}
                                 >
                                     <LogOut className="mr-2 h-4 w-4" /> Exit Room
                                 </Button>

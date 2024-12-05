@@ -2,7 +2,7 @@
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { SignInButton } from '@clerk/nextjs';
+import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 import { Signika } from 'next/font/google';
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,6 +10,7 @@ const signika = Signika({ subsets: ['latin'], weight: ['300', '400', '700'] });
 
 export default function Navbar2() {
     const pathname = usePathname()
+    const { user } = useUser();
     return (
         <header className={`${signika.className} ${pathname === "/" ? "absolute bg-gradient-to-b from-gray-50 to-slate-50/0 shadow-none" : "bg-white shadow-lg"} z-50 flex h-26 w-full shrink-0 items-center justify-between px-4 md:px-6 py-2 rounded-b-lg `}>
             <Sheet>
@@ -76,7 +77,7 @@ export default function Navbar2() {
             </nav>
             <div className="hidden md:block">
                 <div className="bg-gradient-to-b from-[#FFDFB8] to-[#F7EBBD] text-black px-5 py-3 hover:bg-orange-600 transition-colors shadow-lg rounded-2xl">
-                    <SignInButton />
+                    {user ? <SignOutButton /> : <SignInButton />}
                 </div>
             </div>
         </header>
