@@ -351,11 +351,11 @@ function RoomList({
             </div>
             {rooms.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {rooms.map((room) => (
+                    {rooms.map((room, index) => (
                         <Card key={room.id} className="w-full">
                             <CardHeader>
                                 <CardTitle className="flex justify-between items-center">
-                                    Room {room.id}
+                                    Room {rooms.length + 3 - index}
                                     <Badge variant={room.participants.length > 2 ? "destructive" : "secondary"}>
                                         {room.participants.length > 2 ? "Full" : "Available"}
                                     </Badge>
