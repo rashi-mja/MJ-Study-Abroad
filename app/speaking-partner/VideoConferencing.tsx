@@ -167,7 +167,7 @@ export default function VideoConferencingRoom() {
         <div className="mb-5">
             {call && selectedCallId && (
                 <div className="min-h-screen bg-white shadow-2xl rounded-lg p-10 gap-10 flex-col md:flex-row flex bg-cover bg-center" style={{ backgroundImage: `url(/lib-bg.jpg)`, }}>
-                    <div className="md:w-[50%]">
+                    <div className="md:w-[50%] order-2 sm:order-1">
                         <StreamVideo client={client!}>
                             <StreamTheme className="text-white my-theme-overrides">
                                 <StreamCall call={call}>
@@ -177,7 +177,7 @@ export default function VideoConferencingRoom() {
                             </StreamTheme>
                         </StreamVideo>
                     </div>
-                    <div className="md:w-[50%] roudned-lg">
+                    <div className="md:w-[50%] roudned-lg order-1 sm:order-2">
                         <ShowSpeakingQuestions randomModuleSetFromFirebase={randomModuleSetFromFirebase} />
                     </div>
                 </div>
@@ -384,17 +384,17 @@ function RoomList({
                                     </span>
                                 </div>
                                 <div>
-                                    {room.participants.map((p, index) => (
+                                    {/* {room.participants.map((p, index) => (
                                         <Badge key={index} variant="outline" className="mr-2">
                                             {p.name}
                                         </Badge>
-                                    ))}
+                                    ))} */}
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between gap-2">
                                 <Button
                                     onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
-                                    disabled={room.isFull}
+                                    disabled={room.participants.length >= 2}
                                     variant="outline"
                                     className={!room.isFull ? "bg-green-600 font-bold text-white hover:bg-green-500 hover:text-white" : "destructive font-bold"}
                                 >

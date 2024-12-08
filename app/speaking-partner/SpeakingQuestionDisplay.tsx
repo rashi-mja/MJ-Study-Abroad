@@ -90,12 +90,12 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
     const currentQuestion = currentModule === "longTurn" ? currentSet.longTurn.topic : currentSet[currentModule][currentQuestionIndex];
 
     return (
-        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-1 sm:p-4 rounded-3xl">
+        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-1 sm:p-4 rounded-3xl shadow-2xl sm:shadow-none">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
                 {isTestStarted ? (
                     <div className="sm:p-5 md:p-8">
                         <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 text-center mt-3 sm:mt-0">
-                            Speaking Section
+                            Speaking Questions
                         </h2>
                         <div className="bg-gray-100 rounded-lg p-6 mb-6">
                             <p className="text-base md:text-xl font-semibold text-gray-700 mb-2">Module: {currentModule.charAt(0).toUpperCase() + currentModule.slice(1)}</p>
@@ -104,7 +104,7 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
                         <div className="flex justify-between items-center mb-3 mx-4">
                             <button
                                 onClick={handlePrevQuestion}
-                                className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                                className="text-xs flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
                                 aria-label="Previous Question"
                             >
                                 <ArrowLeft className="w-5 h-5 mr-2" />
@@ -112,7 +112,7 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
                             </button>
                             <button
                                 onClick={handleNextQuestion}
-                                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+                                className="text-xs flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
                                 aria-label="Next Question"
                             >
                                 {isLastQuestion ? "Next Set" : "Next"}
