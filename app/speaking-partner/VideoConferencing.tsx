@@ -13,6 +13,7 @@ import { db } from "../../firebaseConfig";
 import CustomCallControls from "./CallControls";
 import { Baloo_Bhai_2 } from 'next/font/google';
 import ShowSpeakingQuestions from "./SpeakingQuestionDisplay";
+import Image from "next/image";
 
 const Baloo = Baloo_Bhai_2({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -268,7 +269,7 @@ function RoomList({
 
     const addParticipantToRoom = async (roomId: string) => {
         if (!user) {
-            window.location.href = "https://special-dingo-3.accounts.dev/sign-in?redirect_url=https%3A%2F%2Fielts-go-global.vercel.app%2Fspeaking-partner"
+            window.location.href = "https://accounts.ieltsgoglobal.com/sign-in?redirect_url=https%3A%2F%2Fwww.ieltsgoglobal.com%2Fspeaking-partner"
         } else {
             try {
                 const roomRef = doc(db, "rooms", roomId);
@@ -347,6 +348,15 @@ function RoomList({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m-.582 0a7 7 0 0113.657 2M20 20v-5h-.581m.581 0a7 7 0 01-13.657-2" />
                     </svg>
                     Reload Rooms
+                </Button>
+                <Button
+                    onClick={() => { window.location.href = "https://chat.whatsapp.com/FCXJLuhaUGC25JhFBFCkAR" }}
+                    size="lg"
+                    variant="outline"
+                    className={`${Baloo.className} font-bold`}
+                >
+                    <Image src="/navbar/whatsapp.png" alt="→" width={20} height={20} />
+                    Join Student Community
                 </Button>
             </div>
             {rooms.length > 0 ? (

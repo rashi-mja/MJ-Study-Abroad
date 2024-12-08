@@ -100,7 +100,7 @@ export default function Navbar2() {
                     <Separator className="my-4" />
                     <SheetFooter>
                         <div className="flex flex-col space-y-4 w-full">
-                            <a target="_blank" href="https://chat.whatsapp.com/CHwPiz6xEpHC0WSivb2UN7" className="animate-bounce inline-flex items-center justify-center w-[90%] px-5 py-2 text-sm text-center text-black font-semibold border border-gray-500 rounded-lg sm:w-auto hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 bg-white dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800 gap-[3px] sm:gap-1">
+                            <a target="_blank" href="https://chat.whatsapp.com/FCXJLuhaUGC25JhFBFCkAR" className="animate-bounce inline-flex items-center justify-center w-[90%] px-5 py-2 text-sm text-center text-black font-semibold border border-gray-500 rounded-lg sm:w-auto hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 bg-white dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800 gap-[3px] sm:gap-1">
                                 <Image src="/navbar/whatsapp.png" alt="→" width={20} height={20} />
                                 <h3 className='text-xs text-center'>Join IELTS Student Community</h3>
                             </a>

@@ -154,7 +154,7 @@ const BookCall = () => {
                     setStep(3);
                 } else {
                     sessionStorage.setItem("studentBookingDetails", JSON.stringify(studentData));
-                    window.location.href = "https://special-dingo-3.accounts.dev/sign-in?redirect_url=https%3A%2F%2Fielts-go-global.com"
+                    window.location.href = "https://accounts.ieltsgoglobal.com/sign-in?redirect_url=https%3A%2F%2Fwww.ieltsgoglobal.com%2F"
                 }
             } catch (error) {
                 console.error('Error Storing data:', error);
