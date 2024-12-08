@@ -278,6 +278,11 @@ function RoomList({
                 if (roomSnapshot.exists()) {
                     const roomData = roomSnapshot.data();
 
+                    if ((roomData.participants || []).length >= 2) {
+                        alert("This room is already full. Please join another room or create a new one.");
+                        return;
+                    }
+
                     // Add the current user as a participant
                     const updatedParticipants = [
                         ...(roomData.participants || []),

@@ -90,18 +90,18 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
     const currentQuestion = currentModule === "longTurn" ? currentSet.longTurn.topic : currentSet[currentModule][currentQuestionIndex];
 
     return (
-        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-4 rounded-3xl">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden">
+        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-1 sm:p-4 rounded-3xl">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
                 {isTestStarted ? (
-                    <div className="p-5 md:p-8">
-                        <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
+                    <div className="sm:p-5 md:p-8">
+                        <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 text-center mt-3 sm:mt-0">
                             Speaking Section
                         </h2>
                         <div className="bg-gray-100 rounded-lg p-6 mb-6">
                             <p className="text-base md:text-xl font-semibold text-gray-700 mb-2">Module: {currentModule.charAt(0).toUpperCase() + currentModule.slice(1)}</p>
                             <p className="text-base md:text-lg text-gray-600">{currentQuestion}</p>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center mb-3 mx-4">
                             <button
                                 onClick={handlePrevQuestion}
                                 className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
@@ -121,11 +121,11 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
                         </div>
                     </div>
                 ) : (
-                    <div className="p-8 text-center">
-                        <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-6">Speaking Section Rules</h1>
-                        <div className="bg-blue-100 rounded-lg p-6 mb-6">
+                    <div className="md:p-8 text-center">
+                        <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 mt-3 sm:mt-0">Speaking Section Rules</h1>
+                        <div className="bg-blue-100 rounded-lg p-2 sm:p-6 mb-6">
                             <p className="text-base md:text-lg text-gray-700 mb-4">
-                                Both participants are given different module sets.
+                                Both participants are given same module sets.
                             </p>
                             <p className="text-base md:text-lg text-gray-700">
                                 Decide among yourselves who wants to start asking questions first.
@@ -133,7 +133,7 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
                         </div>
                         <button
                             onClick={startTest}
-                            className="px-8 py-3 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+                            className="px-2 sm:px-8 py-3 mb-2 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
                         >
                             Start Speaking Section
                         </button>
