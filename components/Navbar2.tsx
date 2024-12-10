@@ -8,7 +8,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 const signika = Signika({ subsets: ['latin'], weight: ['300', '400', '700'] });
 import * as React from "react"
-import { ChevronRight, Globe, GraduationCap, Home, Menu, MessageCircle, MoreHorizontal, Search, Mountain } from 'lucide-react'
+import { ChevronRight, Globe, GraduationCap, Home, Menu, MessageCircle, MoreHorizontal, Search, Mountain, LucideBookUser } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -95,6 +95,20 @@ export default function Navbar2() {
                                     <ChevronRight className="h-4 w-4 ml-auto" />
                                 </Link>
                             ))}
+                            <Link
+                                href={"https://chat.whatsapp.com/FCXJLuhaUGC25JhFBFCkAR"}
+                                onClick={() => { alert("Please type: 'Hey, anyone has IELTS materials?' after joining the group!"); }}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md",
+                                    "text-gray-700 hover:text-gray-900 hover:bg-gray-100",
+                                    "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                                    "transition-colors duration-200 ease-in-out"
+                                )}
+                            >
+                                <LucideBookUser className="h-5 w-5" />
+                                IELTS Materials
+                                <ChevronRight className="h-4 w-4 ml-auto" />
+                            </Link>
                         </nav>
                     </div>
                     <Separator className="my-4" />
@@ -105,7 +119,17 @@ export default function Navbar2() {
                                 <h3 className='text-xs text-center'>Join IELTS Student Community</h3>
                             </a>
                             <SheetClose asChild>
-                                <Button type="submit" className="w-full">Contact Us</Button>
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    onClick={() => {
+                                        const message = encodeURIComponent("Hey, I need help regarding _");
+                                        const whatsappURL = `https://wa.me/918802880181?text=${message}`;
+                                        window.open(whatsappURL, "_blank");
+                                    }}
+                                >
+                                    Contact Us
+                                </Button>
                             </SheetClose>
                         </div>
                     </SheetFooter>
@@ -148,7 +172,7 @@ export default function Navbar2() {
                 <Link href="/" className="text-gray-700 hover:text-gray-900">
                     Study Abroad
                 </Link>
-                <Link href="/test-prepration" className="text-gray-700 hover:text-gray-900">
+                <Link href="/test-preparation" className="text-gray-700 hover:text-gray-900">
                     Test Preparation
                 </Link>
                 <Link href="/vocab-ladder" className="text-gray-700 hover:text-gray-900">
