@@ -50,6 +50,8 @@ export default function VideoConferencingRoom() {
     const [randomModuleSetFromFirebase, setRandomModuleSetFromFirebase] = useState<number[] | null>(null); // Add state for randomModuleSet
     const [HowManyPeopleInRoom, setHowManyPeopleInRoom] = useState(0);
     const [SDKparticipantCount, setSDKParticipantCount] = useState(0);
+    const [IsReportIssueModalOpen, setIsReportIssueModalOpen] = useState(false);
+    const [IsReportIssuetriggeredByMismatch, setIsReportIssuetriggeredByMismatch] = useState(false);
 
     // Initialize Stream Video Client
     useEffect(() => {
@@ -201,7 +203,7 @@ export default function VideoConferencingRoom() {
     }, [selectedCallId]);
 
     const deleteRoom = async (roomId: string) => {
-        if (roomId && HowManyPeopleInRoom >= 2 && SDKparticipantCount == 1) {
+        if (roomId && HowManyPeopleInRoom >= 2 && (SDKparticipantCount == 1 || SDKparticipantCount == 0)) {
             try {
                 const roomRef = doc(db, "rooms", roomId);
                 const roomSnapshot = await getDoc(roomRef);
@@ -226,6 +228,25 @@ export default function VideoConferencingRoom() {
         }
     };
 
+    useEffect(() => {
+        if (HowManyPeopleInRoom >= 2 && SDKparticipantCount === 1) {
+            const timeoutId = setTimeout(() => {
+                // Recheck the variables after 5 seconds
+                if (HowManyPeopleInRoom >= 2 && SDKparticipantCount === 1) {
+                    setIsReportIssuetriggeredByMismatch(true); // Open modal programmatically
+                    setIsReportIssueModalOpen(true);
+                    console.log("Mismatch confirmed:", HowManyPeopleInRoom, SDKparticipantCount);
+                } else {
+                    console.log("Mismatch resolved. No need to trigger the modal.");
+                }
+            }, 5000); // 5 seconds
+
+            // Cleanup timeout to avoid memory leaks
+            return () => clearTimeout(timeoutId);
+        }
+    }, [HowManyPeopleInRoom, SDKparticipantCount]);
+
+
     return (
         <div className="mb-5">
             {call && selectedCallId && (
@@ -242,9 +263,23 @@ export default function VideoConferencingRoom() {
                     </div>
                     <div className={`${Baloo.className} flex items-center justify-center flex-col md:w-[50%] roudned-lg order-1 sm:order-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl`}>
                         <div className="flex p-4 sm:p-0 md:gap-3">
-                            <div>{SDKparticipantCount}</div>
+                            {/* <div>{SDKparticipantCount}</div> */}
                             <div className="text-white font-extrabold md:text-3xl">Total Students in Room : {HowManyPeopleInRoom}</div>
-                            <ReportIssueModal removeParticipantFromRoom={removeParticipantFromRoom} selectedCallId={selectedCallId} deleteRoom={deleteRoom} />
+                            <Button
+                                onClick={() => { setIsReportIssueModalOpen(true); setIsReportIssuetriggeredByMismatch(false) }}
+                                variant="destructive"
+                                className="font-semibold"
+                            >
+                                Report Issue
+                            </Button>
+                            <ReportIssueModal
+                                removeParticipantFromRoom={removeParticipantFromRoom}
+                                deleteRoom={deleteRoom}
+                                selectedCallId={selectedCallId}
+                                isModalOpen={IsReportIssueModalOpen}
+                                setIsModalOpen={setIsReportIssueModalOpen}
+                                triggeredByMismatch={IsReportIssuetriggeredByMismatch}
+                            />
                         </div>
                         <ShowSpeakingQuestions randomModuleSetFromFirebase={randomModuleSetFromFirebase} />
                     </div>

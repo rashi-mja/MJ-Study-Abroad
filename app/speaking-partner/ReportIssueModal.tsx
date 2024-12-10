@@ -18,14 +18,20 @@ type ReportIssueModalProps = {
     removeParticipantFromRoom: (roomId: string) => Promise<void>;
     deleteRoom: (roomId: string) => Promise<void>;
     selectedCallId: string | null;
+    isModalOpen: boolean;
+    setIsModalOpen: (open: boolean) => void;
+    triggeredByMismatch?: boolean;
 };
+
 
 export default function ReportIssueModal({
     removeParticipantFromRoom,
     deleteRoom,
     selectedCallId,
+    isModalOpen,
+    setIsModalOpen,
+    triggeredByMismatch
 }: ReportIssueModalProps) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [reportDetails, setReportDetails] = useState("");
 
@@ -42,39 +48,43 @@ export default function ReportIssueModal({
 
     return (
         <div>
-            <Button
-                onClick={() => setIsModalOpen(true)}
-                variant="destructive"
-                className="font-semibold"
-            >
-                Report Issue
-            </Button>
-
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Report an Issue</DialogTitle>
+                        <DialogTitle>
+                            {triggeredByMismatch ? (
+                                "WARNING!"
+                            ) : (
+                                "Report an Issue"
+                            )}
+                        </DialogTitle>
                         <DialogDescription>
-                            Please select the type of issue you'd like to report.
+                            {triggeredByMismatch ? (
+                                "We have detected another device has abruptly shut down without closing the call. We recommend you join another call or create a new room."
+                            ) : (
+                                "Please select the type of issue you'd like to report."
+                            )}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-1 gap-4">
-                            <Button
-                                variant="outline"
-                                className={cn(
-                                    "h-auto py-4 px-4 justify-start items-start text-left transition-colors",
-                                    selectedOption === "report-user"
-                                        ? "border-blue-500 bg-blue-100"
-                                        : "hover:bg-gray-100"
-                                )}
-                                onClick={() => setSelectedOption("report-user")}
-                            >
-                                <div className="flex items-center">
-                                    <AlertCircle className="w-4 h-4 mr-2 text-red-600" />
-                                    <span>Report inappropriate behavior</span>
-                                </div>
-                            </Button>
+                            {!triggeredByMismatch && (
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        "h-auto py-4 px-4 justify-start items-start text-left transition-colors",
+                                        selectedOption === "report-user"
+                                            ? "border-blue-500 bg-blue-100"
+                                            : "hover:bg-gray-100"
+                                    )}
+                                    onClick={() => setSelectedOption("report-user")}
+                                >
+                                    <div className="flex items-center">
+                                        <AlertCircle className="w-4 h-4 mr-2 text-red-600" />
+                                        <span>Report inappropriate behavior</span>
+                                    </div>
+                                </Button>
+                            )}
                             <Button
                                 variant="outline"
                                 className={cn(
@@ -87,7 +97,14 @@ export default function ReportIssueModal({
                             >
                                 <div className="flex items-center">
                                     <Users className="w-4 h-4 mr-2 text-muted-foreground" />
-                                    <span>Incorrect participant count</span>
+                                    <span>
+
+                                        {triggeredByMismatch ? (
+                                            "Join Another Room (Click Here)"
+                                        ) : (
+                                            "Incorrect participant count"
+                                        )}
+                                    </span>
                                 </div>
                             </Button>
                         </div>

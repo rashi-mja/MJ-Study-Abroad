@@ -28,7 +28,7 @@ const JourneyItem: React.FC<JourneyItemProps> = ({ icon, isStart = false, isComp
   <div
     id={id}
     onClick={() => { if (isStart || isActive || isCompleted) { onClick?.() } else { alert("pls complete previous modules") } }}
-    className={`border-blue-800 relative flex items-center justify-center w-16 h-16 rounded-full border-4 cursor-pointer ${isStart ? 'bg-green-500 border-yellow-400' : isCompleted ? 'bg-yellow-300 border-yellow-400' : 'bg-gray-200 border-gray-300'
+    className={`border-blue-800 relative flex items-center justify-center w-16 h-16 rounded-full border-4 cursor-pointer ${isStart ? 'bg-green-500 border-yellow-400' : isCompleted ? 'bg-yellow-300 border-yellow-400' : 'bg-gray-200 border-blue-500'
       } ${isActive ? 'animate-bounce' : ''}`}
   >
     {React.cloneElement(icon, {
