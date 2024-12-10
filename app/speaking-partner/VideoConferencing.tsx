@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { Call, StreamCall, StreamTheme, StreamVideo, SpeakerLayout, StreamVideoClient } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useUser } from "@clerk/clerk-react";
-import { collection, getDocs, query, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, addDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import CustomCallControls from "./CallControls";
 import { Baloo_Bhai_2 } from 'next/font/google';
 import ShowSpeakingQuestions from "./SpeakingQuestionDisplay";
 import Image from "next/image";
+import FakeRoomCards from "./FakeRoomCards";
+import ReportIssueModal from "./ReportIssueModal";
 
 const Baloo = Baloo_Bhai_2({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -46,6 +48,8 @@ export default function VideoConferencingRoom() {
     const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
     const { user } = useUser();
     const [randomModuleSetFromFirebase, setRandomModuleSetFromFirebase] = useState<number[] | null>(null); // Add state for randomModuleSet
+    const [HowManyPeopleInRoom, setHowManyPeopleInRoom] = useState(0);
+    const [SDKparticipantCount, setSDKParticipantCount] = useState(0);
 
     // Initialize Stream Video Client
     useEffect(() => {
@@ -76,7 +80,22 @@ export default function VideoConferencingRoom() {
 
         setCall(myCall);
 
+        const updateParticipantCount = () => {
+            const participants = myCall.state.participants || [];
+            setSDKParticipantCount(participants.length);
+        };
+
+        // Attach listeners for participant events
+        myCall.on("participantJoined", updateParticipantCount);
+        myCall.on("participantLeft", updateParticipantCount);
+
+        updateParticipantCount();
+
         return () => {
+
+            myCall.off("participantJoined", updateParticipantCount);
+            myCall.off("participantLeft", updateParticipantCount);
+
             myCall
                 .leave()
                 .catch((err) => console.error("Failed to leave the call:", err));
@@ -163,6 +182,50 @@ export default function VideoConferencingRoom() {
         }
     };
 
+    useEffect(() => {
+        if (!selectedCallId) return;
+
+        const roomRef = doc(db, "rooms", selectedCallId);
+
+        const unsubscribe = onSnapshot(roomRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                const roomData = docSnapshot.data();
+                const participants = roomData.participants || [];
+                setHowManyPeopleInRoom(participants.length);
+            } else {
+                console.error(`Room with ID ${selectedCallId} does not exist.`);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [selectedCallId]);
+
+    const deleteRoom = async (roomId: string) => {
+        if (roomId && HowManyPeopleInRoom >= 2 && SDKparticipantCount == 1) {
+            try {
+                const roomRef = doc(db, "rooms", roomId);
+                const roomSnapshot = await getDoc(roomRef);
+
+                if (roomSnapshot.exists()) {
+                    await deleteDoc(roomRef); // Delete the room document from Firestore
+                    console.log(`Room with ID ${roomId} has been deleted.`);
+
+                    // Optional: Reset related states if the current room is deleted
+                    if (selectedCallId === roomId) {
+                        setCall(undefined);
+                        setSelectedCallId(null);
+                    }
+                } else {
+                    console.error(`Room with ID ${roomId} does not exist.`);
+                }
+            } catch (error) {
+                console.error("Error deleting room:", error);
+            }
+        } else {
+            alert("less participants in room")
+        }
+    };
+
     return (
         <div className="mb-5">
             {call && selectedCallId && (
@@ -177,13 +240,18 @@ export default function VideoConferencingRoom() {
                             </StreamTheme>
                         </StreamVideo>
                     </div>
-                    <div className="md:w-[50%] roudned-lg order-1 sm:order-2">
+                    <div className={`${Baloo.className} flex items-center justify-center flex-col md:w-[50%] roudned-lg order-1 sm:order-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl`}>
+                        <div className="flex p-4 sm:p-0 md:gap-3">
+                            <div>{SDKparticipantCount}</div>
+                            <div className="text-white font-extrabold md:text-3xl">Total Students in Room : {HowManyPeopleInRoom}</div>
+                            <ReportIssueModal removeParticipantFromRoom={removeParticipantFromRoom} selectedCallId={selectedCallId} deleteRoom={deleteRoom} />
+                        </div>
                         <ShowSpeakingQuestions randomModuleSetFromFirebase={randomModuleSetFromFirebase} />
                     </div>
                 </div>
             )}
             {!call && (
-                <RoomList setCallId={setSelectedCallId} removeParticipantFromRoom={removeParticipantFromRoom} />
+                <RoomList setCallId={setSelectedCallId} removeParticipantFromRoom={removeParticipantFromRoom} HowManyPeopleInRoom={setHowManyPeopleInRoom} />
             )}
         </div>
     );
@@ -192,9 +260,11 @@ export default function VideoConferencingRoom() {
 function RoomList({
     setCallId,
     removeParticipantFromRoom,
+    HowManyPeopleInRoom
 }: {
     setCallId: (callId: string) => void;
     removeParticipantFromRoom: (roomId: string) => void;
+    HowManyPeopleInRoom: (callId: number) => void;
 }) {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(false);
@@ -366,13 +436,15 @@ function RoomList({
             </div>
             {rooms.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {rooms.map((room, index) => (
+                    {rooms.sort((a, b) => {
+                        return a.participants.length - b.participants.length;
+                    }).map((room, index) => (
                         <Card key={room.id} className="w-full">
                             <CardHeader>
                                 <CardTitle className="flex justify-between items-center">
                                     Room {rooms.length + 3 - index}
-                                    <Badge variant={room.participants.length > 2 ? "destructive" : "secondary"}>
-                                        {room.participants.length > 2 ? "Full" : "Available"}
+                                    <Badge variant={(room.participants.length >= 2) ? "destructive" : "secondary"}>
+                                        {(room.participants.length >= 2) ? "Full" : "Available"}
                                     </Badge>
                                 </CardTitle>
                             </CardHeader>
@@ -393,16 +465,17 @@ function RoomList({
                             </CardContent>
                             <CardFooter className="flex justify-between gap-2">
                                 <Button
-                                    onClick={() => { setCallId(room.id); addParticipantToRoom(room.id) }}
+                                    onClick={() => { setCallId(room.id); addParticipantToRoom(room.id); HowManyPeopleInRoom(room.participants.length + 1) }}
                                     disabled={room.participants.length >= 2}
                                     variant="outline"
-                                    className={!room.isFull ? "bg-green-600 font-bold text-white hover:bg-green-500 hover:text-white" : "destructive font-bold"}
+                                    className={"bg-green-600 font-bold text-white hover:bg-green-500 hover:text-white"}
                                 >
                                     <LogIn className="mr-2 h-4 w-4" /> Join Room
                                 </Button>
                                 <Button
                                     onClick={() => { setCallId(''); removeParticipantFromRoom(room.id) }}
-                                    disabled={room.isFull}
+                                    // disabled={room.isFull}
+                                    disabled={true}
                                     variant={!room.isFull ? "outline" : "destructive"}
                                 >
                                     <LogOut className="mr-2 h-4 w-4" /> Exit Room
@@ -410,134 +483,7 @@ function RoomList({
                             </CardFooter>
                         </Card>
                     ))}
-                    <>
-                        <Card className="w-full">
-                            <CardHeader>
-                                <CardTitle className="flex justify-between items-center">
-                                    Room 3
-                                    <Badge variant="destructive">
-                                        Full
-                                    </Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center mb-2">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    <span>
-                                        2 / 2 Participants
-                                    </span>
-                                </div>
-                                <div>
-                                    {/* <Badge variant="outline" className="mr-2">
-                                        Alice
-                                    </Badge>
-                                    <Badge variant="outline" className="mr-2">
-                                        Bob
-                                    </Badge> */}
-                                </div>
-                            </CardContent>
-                            <CardFooter className="flex justify-between">
-                                <Button
-                                    onClick={() => { }}
-                                    disabled={true}
-                                    variant="outline"
-                                >
-                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
-                                </Button>
-                                <Button
-                                    onClick={() => { }}
-                                    // disabled={callId !== room.id}
-                                    variant="destructive"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
-                                </Button>
-                            </CardFooter>
-                        </Card>
-                        <Card className="w-full">
-                            <CardHeader>
-                                <CardTitle className="flex justify-between items-center">
-                                    Room 2
-                                    <Badge variant="destructive">
-                                        Full
-                                    </Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center mb-2">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    <span>
-                                        2 / 2 Participants
-                                    </span>
-                                </div>
-                                <div>
-                                    {/* <Badge variant="outline" className="mr-2">
-                                        Mamta
-                                    </Badge>
-                                    <Badge variant="outline" className="mr-2">
-                                        Grace
-                                    </Badge> */}
-                                </div>
-                            </CardContent>
-                            <CardFooter className="flex justify-between">
-                                <Button
-                                    onClick={() => { }}
-                                    disabled={true}
-                                    variant="outline"
-                                >
-                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
-                                </Button>
-                                <Button
-                                    onClick={() => { }}
-                                    // disabled={callId !== room.id}
-                                    variant="destructive"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
-                                </Button>
-                            </CardFooter>
-                        </Card>
-                        <Card className="w-full">
-                            <CardHeader>
-                                <CardTitle className="flex justify-between items-center">
-                                    Room 1
-                                    <Badge variant="destructive">
-                                        Full
-                                    </Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center mb-2">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    <span>
-                                        2 / 2 Participants
-                                    </span>
-                                </div>
-                                <div>
-                                    {/* <Badge variant="outline" className="mr-2">
-                                        Alice
-                                    </Badge>
-                                    <Badge variant="outline" className="mr-2">
-                                        Bob
-                                    </Badge> */}
-                                </div>
-                            </CardContent>
-                            <CardFooter className="flex justify-between">
-                                <Button
-                                    onClick={() => { }}
-                                    disabled={true}
-                                    variant="outline"
-                                >
-                                    <LogIn className="mr-2 h-4 w-4" /> Join Room
-                                </Button>
-                                <Button
-                                    onClick={() => { }}
-                                    // disabled={callId !== room.id}
-                                    variant="destructive"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" /> Exit Room
-                                </Button>
-                            </CardFooter>
-                        </Card>
-                    </>
+                    <FakeRoomCards />
                 </div>
             ) : (
                 <p className="text-center text-gray-500">No available rooms found.</p>

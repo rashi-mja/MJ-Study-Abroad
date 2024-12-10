@@ -90,7 +90,7 @@ export default function ShowSpeakingQuestions({ randomModuleSetFromFirebase }: {
     const currentQuestion = currentModule === "longTurn" ? currentSet.longTurn.topic : currentSet[currentModule][currentQuestionIndex];
 
     return (
-        <div className="min-h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center p-1 sm:p-4 rounded-3xl shadow-2xl sm:shadow-none">
+        <div className="flex items-center justify-center p-1 sm:p-4 rounded-3xl shadow-2xl sm:shadow-none">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
                 {isTestStarted ? (
                     <div className="sm:p-5 md:p-8">
