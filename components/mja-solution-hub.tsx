@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Baloo = Baloo_Bhai_2({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
-export default function MJASolutionHub() {
+export default function MJASolutionHub({ onTriggerModal = () => { } }) {
   const sections = [
     {
       title: "Test Preparation",
@@ -117,6 +117,7 @@ export default function MJASolutionHub() {
                 <Button
                   variant="outline"
                   className={`${Baloo.className} font-bold rounded-3xl sm:text-lg p-5 border boder-black shadow-lg`}
+                  onClick={onTriggerModal}
                 >
                   {section.buttonText}
                 </Button>

@@ -13,8 +13,38 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"; // Import Shadcn dialog components
 import { useEffect, useState } from "react";
+import type { Metadata } from "next";
 
 const signika = Signika({ subsets: ["latin"], weight: ["300", "400", "700"] });
+
+export const metadata: Metadata = {
+  title: "IELTS Go Global | Your Gateway to Study Abroad",
+  description:
+    "Explore study abroad opportunities and prepare for IELTS with the best resources, study partners, and guidance. Join our global student community today!",
+  keywords: "IELTS preparation, Study Abroad, Study Partners, IELTS Go Global, ieltsgoglobal",
+  openGraph: {
+    title: "IELTS Go Global | Your Gateway to Study Abroad",
+    description:
+      "Explore study abroad opportunities and prepare for IELTS with the best resources, study partners, and guidance. Join our global student community today!",
+    url: "https://ieltsgoglobal.com",
+    images: [
+      {
+        url: "/landingPage/WorldMapBG.png",
+        width: 1200,
+        height: 630,
+        alt: "IELTS Go Global Landing Page",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IELTS Go Global | Your Gateway to Study Abroad",
+    description:
+      "Explore study abroad opportunities and prepare for IELTS with the best resources, study partners, and guidance. Join our global student community today!",
+    images: ["/landingPage/WorldMapBG.png"], // Image for Twitter cards
+    creator: "@MJ_Study_Abroad", // Replace with your Twitter handle
+  },
+};
 
 export default function LandingPage() {
   const [isBookCounselingModalOpen, setIsBookCounselingModalOpen] = useState(false);
@@ -84,7 +114,7 @@ export default function LandingPage() {
 
       <main>
         <div className="h-10 bg-gradient-to-b from-[#86D5F6] to-slate-50"></div>
-        <MJASolutionHub />
+        <MJASolutionHub onTriggerModal={() => setIsBookCounselingModalOpen(true)} />
       </main>
 
       <main>
