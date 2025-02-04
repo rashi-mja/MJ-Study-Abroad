@@ -1,7 +1,7 @@
-
 import LandingPage from "@/components/LandingPage/LandingPageComponent";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "MJ Study Abroad | Your Gateway to Study Abroad",
@@ -158,7 +158,9 @@ export default function Page() {
               </ul> */}
 
               <ul className="mt-8 flex gap-6">
-                <Button variant="default" onClick={() => { window.location.href = "https://maps.app.goo.gl/JXhyoCivQgU9b5Yu9" }}>Get Directions</Button>
+                <Link href="https://maps.app.goo.gl/JXhyoCivQgU9b5Yu9">
+                  <Button variant="default" >Get Directions</Button>
+                </Link>
               </ul>
             </div>
 
