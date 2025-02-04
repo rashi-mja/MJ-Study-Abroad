@@ -30,7 +30,8 @@ export default function Navbar2() {
         { href: "/", label: "Home", icon: Home },
         // { href: "/", label: "Study Abroad", icon: GraduationCap },
         { href: "/test-preparation", label: "Test Preparation", icon: Search },
-        { href: "/speaking-partner", label: "Find IELTS Speaking Partner", icon: MessageCircle },
+        { href: "https://www.toeflgoglobal.com", label: "TOEFL Prepration", icon: MessageCircle },
+        { href: "https://www.gregoglobal.com", label: "GRE Prepration", icon: MessageCircle },
         { href: "/vocab-ladder", label: "IELTS Vocab Practice", icon: Mountain },
     ]
     const { isSignedIn } = useUser()
@@ -184,8 +185,11 @@ export default function Navbar2() {
                 <Link href="/blog" className="text-gray-700 hover:text-gray-900">
                     Blog
                 </Link> */}
-                <Link href="/speaking-partner" className="text-gray-700 hover:text-gray-900">
-                    Fing IELTS Speaking Partner
+                <Link href="https://wwww.toeflgoglobal.com" className="text-gray-700 hover:text-gray-900">
+                    TOEFL Prepration
+                </Link>
+                <Link href="https://gregoglobal.com" className="text-gray-700 hover:text-gray-900">
+                    GRE Prepration
                 </Link>
             </nav>
             <div className="hidden md:block">
