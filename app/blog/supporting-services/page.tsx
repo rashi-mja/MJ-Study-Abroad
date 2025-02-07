@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { TracingBeam } from "@/components/tracing-beam";
 import { Inter } from "next/font/google";
 
-export const blogFont = Inter({
+const blogFont = Inter({
     subsets: ["latin"],
     weight: ["400", "500", "700"],
     variable: "--font-blog",
