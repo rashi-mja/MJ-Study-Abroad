@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Baloo_Bhai_2 } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 
 const Baloo = Baloo_Bhai_2({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
@@ -15,6 +16,7 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#FBE8BA]",
       gradientTo: "to-white",
       alignment: "left",
+      buttonLink: "/test-preparation"
     },
     {
       title: "Test Vouchers",
@@ -25,6 +27,7 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-blue-400/40",
       gradientTo: "to-white",
       alignment: "right",
+      buttonLink: "/blog/test-vouchers"
     },
     {
       title: "Visual Vocabulary",
@@ -35,6 +38,7 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#E5DBF0]",
       gradientTo: "to-white",
       alignment: "left",
+      buttonLink: "/blog/visual-vocabulary"
     },
     {
       title: "University Shortlisting and Admissions",
@@ -45,6 +49,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#FDEBD1]",
       gradientTo: "to-white",
       alignment: "right",
+      buttonLink: "/blog/university-shortlisting"
+
     },
     {
       title: "SOP/LOR Editing Services",
@@ -55,6 +61,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#D9E7FF]",
       gradientTo: "to-white",
       alignment: "left",
+      buttonLink: "/blog/sop-lor-editing-services"
+
     },
     {
       title: "Scholarships",
@@ -65,6 +73,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#FBE8BA]",
       gradientTo: "to-white",
       alignment: "right",
+      buttonLink: "/blog/scholarships"
+
     },
     {
       title: "Visa Services",
@@ -75,6 +85,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#F7F0E3]",
       gradientTo: "to-white",
       alignment: "left",
+      buttonLink: "/blog/visa-services"
+
     },
     {
       title: "Education Loan",
@@ -85,6 +97,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#D9F2FF]",
       gradientTo: "to-white",
       alignment: "right",
+      buttonLink: "/blog/education-loan"
+
     },
     {
       title: "Supporting Services",
@@ -95,6 +109,8 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
       gradientFrom: "from-[#E7F4FF]",
       gradientTo: "to-white",
       alignment: "left",
+      buttonLink: "/blog/supporting-services"
+
     },
   ];
 
@@ -114,13 +130,13 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
               <div className="px-5">
                 <h2 className="text-2xl sm:text-4xl font-bold mb-4">{section.title}</h2>
                 <p className="sm:text-xl text-gray-700 mb-6">{section.description}</p>
-                <Button
+                <Link href={section.buttonLink}><Button
                   variant="outline"
                   className={`${Baloo.className} font-bold rounded-3xl sm:text-lg p-5 border boder-black shadow-lg`}
-                  onClick={onTriggerModal}
                 >
                   {section.buttonText}
                 </Button>
+                </Link>
               </div>
             )}
             <div
@@ -139,12 +155,13 @@ export default function MJASolutionHub({ onTriggerModal = () => { } }) {
               <div className="px-5 order-1 sm:order-none">
                 <h2 className="text-2xl sm:text-4xl font-bold mb-4">{section.title}</h2>
                 <p className="sm:text-xl text-gray-700s mb-6">{section.description}</p>
-                <Button
+                <Link href={section.buttonLink}><Button
                   variant="outline"
                   className={`${Baloo.className} font-bold rounded-3xl sm:text-lg p-5 border boder-black shadow-lg`}
                 >
                   {section.buttonText}
                 </Button>
+                </Link>
               </div>
             )}
           </div>

@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Plus } from 'lucide-react'
@@ -27,9 +29,9 @@ export default function EducationLanding() {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">
-            <span className="text-[#00e6e6]">Imagine</span> the Things
+            <span className="text-[#00e6e6]">Achieve</span> Your Dream
             <br />
-            done in <span className="text-[#ffd700]">The Lab</span>
+            Score with<span className="text-[#ffd700]">Expert Guidance</span>
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Experience education without boundaries – Turn your Study Abroad
@@ -37,8 +39,9 @@ export default function EducationLanding() {
           </p>
           <Button
             className="bg-[#00e6e6] hover:bg-[#00cccc] text-black font-semibold px-8 py-6 text-lg rounded-full"
+            onClick={() => { window.location.href = "https://wa.me/+918802880181?text=Hi,I want to know about class schedules" }}
           >
-            Join Us today
+            Contant Us
           </Button>
         </div>
 
@@ -51,9 +54,6 @@ export default function EducationLanding() {
                   alt={`${card.name} Test Preparation`}
                   className="object-cover max-w-full h-full max-h-[200px] sm:max-h-[400px]"
                 />
-                {/* <div className="absolute bottom-4 right-4 bg-[#ffd700] p-2 rounded-lg cursor-pointer transform transition-transform group-hover:scale-110">
-                  <Plus className="w-6 h-6 text-black" />
-                </div> */}
               </div>
             </Card>
           ))}

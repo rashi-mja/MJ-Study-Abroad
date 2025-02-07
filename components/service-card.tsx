@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle } from 'lucide-react'
+import Link from "next/link"
 
 interface ServiceCardProps {
     title: string
@@ -48,7 +49,7 @@ export function ServiceCard({
                                 asChild
                                 className="bg-orange-500 hover:bg-orange-600"
                             >
-                                <a href={buttonHref}>{buttonText}</a>
+                                <Link href={buttonHref}>{buttonText}</Link>
                             </Button>
                         </div>
                     </div>

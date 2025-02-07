@@ -18,7 +18,7 @@ export default function TestPrepBlogSection() {
                     "Strategies aligned with the GRE scoring algorithm"
                 ]}
                 buttonText="Reserve Your Consultation"
-                buttonHref={getWhatsappLink("GRE")}
+                buttonHref="/blog/gre-preparation"
                 imageSrc="/test-prepration/GREprepration.png"
                 imageAlt="GRE Preparation Service Illustration"
             // reversed
@@ -33,7 +33,7 @@ export default function TestPrepBlogSection() {
                     "Practice tests that simulate real IELTS conditions"
                 ]}
                 buttonText="Book Your Session"
-                buttonHref={getWhatsappLink("IELTS")}
+                buttonHref="/blog/ielts-preparation"
                 imageSrc="/test-prepration/IELTSprepration.png"
                 imageAlt="IELTS Mastery Service Illustration"
                 reversed
@@ -48,7 +48,7 @@ export default function TestPrepBlogSection() {
                     "Expert feedback to refine language skills"
                 ]}
                 buttonText="Enroll in TOEFL Prep"
-                buttonHref={getWhatsappLink("TOEFL")}
+                buttonHref="/blog/toefl-preparation"
                 imageSrc="/test-prepration/TOEFLprepration.png"
                 imageAlt="TOEFL Preparation Service Illustration"
             />
