@@ -16,14 +16,20 @@ export type Student = {
     countryCode?: string
     mobile?: string
     studyPlan?: string
+    city?: string
+    additionalInfo?: string
+    branchLocation?: string
 }
 
 interface StudentTableProps {
     students: Student[]
+    isFranchise?: boolean // Accept isFranchise as an optional prop
 }
 
-export function StudentTable({ students }: StudentTableProps) {
+
+export function StudentTable({ students, isFranchise }: StudentTableProps) {
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
+
 
     const generateWhatsAppLink = (student: Student) => {
         const phoneNumber = `${student.countryCode || ""}${student.mobile || ""}`
@@ -57,11 +63,13 @@ export function StudentTable({ students }: StudentTableProps) {
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Degree</TableHead>
-                    <TableHead>Year</TableHead>
-                    <TableHead>Course</TableHead>
+                    {!isFranchise && <TableHead>Year</TableHead>}
+                    {!isFranchise && <TableHead>Course</TableHead>}
                     <TableHead>Meeting Date</TableHead>
                     <TableHead>Meeting Time</TableHead>
-                    <TableHead>Stage</TableHead>
+                    {!isFranchise && <TableHead>Stage</TableHead>}
+                    {isFranchise && <TableHead>City</TableHead>}
+                    {isFranchise && <TableHead>Phone Number</TableHead>}
                     <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -71,11 +79,13 @@ export function StudentTable({ students }: StudentTableProps) {
                         <TableCell>{student.firstName}</TableCell>
                         <TableCell>{student.email}</TableCell>
                         <TableCell>{student.degree}</TableCell>
-                        <TableCell>{student.studyYear || "-"}</TableCell>
-                        <TableCell>{student.course || "-"}</TableCell>
+                        {!isFranchise && <TableCell>{student.studyYear || "-"}</TableCell>}
+                        {!isFranchise && <TableCell>{student.course || "-"}</TableCell>}
                         <TableCell>{student.selectedDate ? new Date(student.selectedDate).toLocaleDateString() : "Not Scheduled"}</TableCell>
                         <TableCell>{student.selectedTime || "-"}</TableCell>
-                        <TableCell>{student.stage}</TableCell>
+                        {!isFranchise && <TableCell>{student.stage}</TableCell>}
+                        {isFranchise && <TableCell>{student?.city}</TableCell>}
+                        {isFranchise && <TableCell>{student?.mobile}</TableCell>}
                         <TableCell>
                             <Dialog>
                                 <DialogTrigger asChild>
@@ -102,12 +112,16 @@ export function StudentTable({ students }: StudentTableProps) {
                                             <p>
                                                 <strong>Degree:</strong> {selectedStudent.degree}
                                             </p>
-                                            <p>
-                                                <strong>Year:</strong> {selectedStudent.studyYear || "-"}
-                                            </p>
-                                            <p>
-                                                <strong>Course:</strong> {selectedStudent.course || "-"}
-                                            </p>
+                                            {!isFranchise &&
+                                                (<>
+                                                    <p>
+                                                        <strong>Year:</strong> {selectedStudent.studyYear || "-"}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Course:</strong> {selectedStudent.course || "-"}
+                                                    </p>
+                                                </>)
+                                            }
                                             <p>
                                                 <strong>Meeting Date:</strong>{" "}
                                                 {selectedStudent.selectedDate
@@ -117,18 +131,27 @@ export function StudentTable({ students }: StudentTableProps) {
                                             <p>
                                                 <strong>Meeting Time:</strong> {selectedStudent.selectedTime || "-"}
                                             </p>
-                                            <p>
-                                                <strong>Stage:</strong> {selectedStudent.stage}
-                                            </p>
+                                            {!isFranchise &&
+                                                <p>
+                                                    <strong>Stage:</strong> {selectedStudent.stage}
+                                                </p>
+                                            }
                                             <p>
                                                 <strong>Country Code:</strong> {selectedStudent.countryCode || "-"}
                                             </p>
                                             <p>
                                                 <strong>Mobile:</strong> {selectedStudent.mobile || "-"}
                                             </p>
-                                            <p>
-                                                <strong>Study Plan:</strong> {selectedStudent.studyPlan || "-"}
-                                            </p>
+                                            {!isFranchise &&
+                                                <p>
+                                                    <strong>Study Plan:</strong> {selectedStudent.studyPlan || "-"}
+                                                </p>
+                                            }
+                                            {isFranchise &&
+                                                <p>
+                                                    <strong>Additional Info:</strong> {selectedStudent?.additionalInfo || "-"}
+                                                </p>
+                                            }
                                             <p>
                                                 <Button onClick={() => handleWhatsAppMessage(selectedStudent)}>Message on Whatsapp</Button>
                                             </p>

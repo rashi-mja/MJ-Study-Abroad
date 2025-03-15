@@ -1,7 +1,13 @@
+"use client"
+
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { usePathname } from "next/navigation";
 
 export default function MainFooter() {
+  const pathname = usePathname(); // ✅ Allowed in Client Components
+  if (pathname === "/admin-dashboard/janakpuri") return null;
+
   return (
     <footer className="bg-white lg:grid lg:grid-cols-5">
       <div className="relative block h-32 lg:col-span-2 lg:h-full">
