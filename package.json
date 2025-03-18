@@ -26,7 +26,7 @@
     "clsx": "^2.1.1",
     "firebase": "^11.0.2",
     "framer": "^2.4.1",
-    "framer-motion": "^12.5.0",
+    "framer-motion": "^10.18.0",
     "lucide-react": "^0.460.0",
     "motion": "^12.4.0",
     "next": "15.0.3",

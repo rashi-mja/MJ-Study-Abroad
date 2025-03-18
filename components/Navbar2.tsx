@@ -185,7 +185,7 @@ export default function Navbar2() {
                 <Link href="/blog" className="text-gray-700 hover:text-gray-900">
                     Blog
                 </Link> */}
-                <Link href="https://wwww.toeflgoglobal.com" className="text-gray-700 hover:text-gray-900">
+                <Link href="https://www.toeflgoglobal.com" className="text-gray-700 hover:text-gray-900">
                     TOEFL Prepration
                 </Link>
                 <Link href="https://gregoglobal.com" className="text-gray-700 hover:text-gray-900">
