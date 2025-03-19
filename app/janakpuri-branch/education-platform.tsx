@@ -4,7 +4,6 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, BookOpen, GraduationCap, BarChart3, Globe, ChevronDown, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/firebaseConfig"
@@ -91,24 +89,60 @@ export default function EducationPlatform() {
 
   const testimonials = [
     {
-      name: "Alex Johnson",
-      program: "Computer Science at ETH Zurich",
+      name: "Rohan Mehta",
+      program: "Data Science at Carnegie Mellon University",
       avatar: "/placeholder.svg?height=40&width=40",
-      quote: "The guidance I received was invaluable. Now I'm studying at my dream university!",
+      quote: "The structured guidance helped me land admission to a top-ranked program.",
     },
     {
-      name: "Priya Sharma",
-      program: "MBA at INSEAD",
+      name: "Ananya Iyer",
+      program: "Medicine at University of Toronto",
       avatar: "/placeholder.svg?height=40&width=40",
-      quote: "From application to acceptance, they supported me every step of the way.",
+      quote: "I wouldn't have navigated the complex admissions process without their help!",
     },
     {
-      name: "Marco Rossi",
-      program: "Ph.D. in Physics at MIT",
+      name: "Karthik Reddy",
+      program: "Law at Harvard University",
       avatar: "/placeholder.svg?height=40&width=40",
-      quote: "Their expertise in scholarship applications helped me secure full funding.",
+      quote: "The personal guidance I received made my dream of studying law a reality.",
     },
-  ]
+    {
+      name: "Ishita Patel",
+      program: "Fine Arts at Royal College of Art",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "Their portfolio review and application strategy gave me the confidence to apply!",
+    },
+    {
+      name: "Himanshu Verma",
+      program: "Mechanical Engineering at University of Tokyo",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "Thanks to their mentorship, I secured a spot in one of the best engineering schools!",
+    },
+    {
+      name: "Sneha Nair",
+      program: "Psychology at Stanford University",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "I was guided at every step, from SOP writing to interview prep. Amazing support!",
+    },
+    {
+      name: "Arjun Malhotra",
+      program: "International Relations at LSE",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "Their guidance helped me craft a compelling application that stood out.",
+    },
+    {
+      name: "Sanya Gupta",
+      program: "MIM at ESSEC Business School",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "Their in-depth knowledge of European universities helped me get into a top MIM program!",
+    },
+    {
+      name: "Aditya Das",
+      program: "Artificial Intelligence at University of Amsterdam",
+      avatar: "/placeholder.svg?height=40&width=40",
+      quote: "The application strategy and resume review were game changers for me!",
+    },
+  ];
 
   const handleProgramSelect = (id: string) => {
     setSelectedProgram(id)
@@ -219,7 +253,7 @@ export default function EducationPlatform() {
                     <Card key={index} className="border-slate-200/40 dark:border-slate-800/40">
                       <CardHeader>
                         <div className="flex items-center gap-4">
-                          <Avatar>
+                          {/* <Avatar>
                             <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                             <AvatarFallback>
                               {testimonial.name
@@ -227,7 +261,7 @@ export default function EducationPlatform() {
                                 .map((n) => n[0])
                                 .join("")}
                             </AvatarFallback>
-                          </Avatar>
+                          </Avatar> */}
                           <div>
                             <CardTitle className="text-base">{testimonial.name}</CardTitle>
                             <CardDescription className="text-xs">{testimonial.program}</CardDescription>
